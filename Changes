@@ -1,3 +1,8 @@
+vX.XX 
+- removed diagnostic handling for explain responses that lack version and
+  operator
+- fixed explain response to use <record> element properly
+
 v0.85 Mon Dec 20 21:53:06 CST 2004
 - added diagnostic when a default explain is returned when no operator was
   specified

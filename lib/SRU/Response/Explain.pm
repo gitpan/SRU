@@ -42,19 +42,6 @@ sub new {
         stylesheet              => $request->stylesheet(),
     } );
 
-    ## missing version gets a diagnostic error
-    if ( ! $request->version() ) {
-        $self->addDiagnostic( 
-            SRU::Response::Diagnostic->newFromCode(7,'version') 
-        );
-    } 
-    ## missing operator gets a diagnostic error
-    elsif ( ! $request->missingOperator() ) {
-        $self->addDiagnostic( 
-            SRU::Response::Diagnostic->newFromCode(7,'operator') 
-        );
-    }
-
     return $self;
 }
 
