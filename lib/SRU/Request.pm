@@ -40,7 +40,7 @@ conducted:
 
 =item * SRU::Request::Scan
 
-=item * SRU::SearchRetrieve
+=item * SRU::Request::SearchRetrieve
 
 =back
 
@@ -53,20 +53,20 @@ sub newFromURI {
     my ($class,$uri) = @_;
 
     ## be nice and try to turn a string into a URI if necessary
-    if ( ! UNIVERSAL::isa($uri, 'URI') ) { $uri = URI->new($uri); }
+    if ( ! UNIVERSAL::isa( $uri, 'URI' ) ) { $uri = URI->new($uri); }
     return error( "invalid uri: $uri" ) if ! UNIVERSAL::isa( $uri, 'URI' ); 
 
-    my $base = $uri->scheme . '://' . $uri->host() . $uri->path();
-    my %query = $uri->query_form();
-    my $operation = $query{operation};
+    my $base      = $uri->scheme . '://' . $uri->host() . $uri->path();
+    my %query     = $uri->query_form();
+    my $operation = $query{operation} || 'explain';
 
     my $request;
     if ( $operation eq 'scan' ) { 
-        $request = SRU::Request::Scan->new( base=>$base, %query );
+        $request = SRU::Request::Scan->new( base => $base, %query );
     } elsif ( $operation eq 'searchRetrieve' ) {
-        $request = SRU::Request::SearchRetrieve->new( base=>$base, %query );
+        $request = SRU::Request::SearchRetrieve->new( base => $base, %query );
     } elsif ( $operation eq 'explain' ) {
-        $request = SRU::Request::Explain->new( base=>$base, %query );
+        $request = SRU::Request::Explain->new( base => $base, %query );
     }
 
     return $request;
@@ -83,9 +83,10 @@ A factory method for creating a request object from a CGI object.
 
 sub newFromCGI {
     my ($class,$cgi) = @_;
-    return error( "invalid CGI object" ) if ! UNIVERSAL::isa( $cgi, 'CGI' );
-    return $class->newFromURI( 'http://'.  $cgi->server_name().
-        $cgi->script_name() .  '?' .  $cgi->query_string() );
+
+    ## We want either an actual CGI object, or at least an object that gives us url()
+    return error( "invalid CGI object" ) unless UNIVERSAL::isa( $cgi, 'CGI' ) or $cgi->can( 'url' );
+    return $class->newFromURI( $cgi->url );
 }
 
 1;

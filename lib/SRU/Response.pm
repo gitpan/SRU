@@ -14,7 +14,7 @@ SRU::Response - A factory for creating SRU response objects
 
 =head1 SYNOPSIS
 
-    my $request = SRU::Requeset->newFromURI( $uri );
+    my $request = SRU::Request->newFromURI( $uri );
     my $response = SRU::Response->newFromRequest( $request );
 
 =head1 DESCRIPTION
@@ -83,6 +83,10 @@ sub addDiagnostic {
     push(@{ $self->{diagnostics} }, $d);
 }
 
+=head2 diagnosticsXML()
+
+=cut
+
 sub diagnosticsXML {
     my $self = shift;
     my $xml = '';
@@ -91,6 +95,10 @@ sub diagnosticsXML {
     }
     return $xml;
 }
+
+=head2 stylesheetXML()
+
+=cut
 
 sub stylesheetXML {
     my $self = shift;

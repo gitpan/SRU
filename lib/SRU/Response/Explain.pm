@@ -74,6 +74,10 @@ SRU::Response::Explain->mk_accessors( qw(
     stylesheet
 ) );
 
+=head2 asXML()
+
+=cut
+
 sub asXML {
     my $self = shift;
     my $stylesheet = $self->stylesheetXML();
@@ -91,7 +95,7 @@ $stylesheet
 <recordPacking>xml</recordPacking>
 <recordData>
 EXPLAIN_XML
-    $xml .= $self->record();
+    $xml .= $self->record->asXML();
     $xml .= 
 <<EXPLAIN_XML;
 </recordData>

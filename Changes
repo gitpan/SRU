@@ -1,3 +1,6 @@
+v0.4 Tue Nov 16 20:12:34 CST 2004
+- doc fixes and tuneups from Brian Cassidy
+
 v0.3 Sun Sep  5 15:17:35 CDT 2004
 - fixed SRU::Request::newFromCGI() and added test t/cgi.t
 - fixed stylesheet handling in response objects

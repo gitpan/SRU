@@ -20,7 +20,12 @@ OK: {
     isa_ok( $response, 'SRU::Response::Explain' );
     is( $response->type(), 'explain', 'type()' );
 
-    $response->record( "<foo>bar</foo>" );
+    $response->record(
+        SRU::Response::Record->new(
+            recordSchema => 'http://explain.z3950.org/dtd/2.0/',
+            recordData   => '<foo>bar</foo>'
+        )
+    );
     my $xml = $response->asXML();
     like( $xml, qr{\Q<?xml-stylesheet type='text/xsl' href="http://www.example.com/style.xsl" ?>\E}, 'found stylsheet in XML' ); 
 
@@ -36,7 +41,13 @@ MISSING_VERSION: {
     my $response = SRU::Response->newFromRequest( $request );
     isa_ok( $response, 'SRU::Response::Explain' );
 
-    $response->record( "<foo>bar</foo>" );
+    $response->record(
+        SRU::Response::Record->new(
+            recordSchema => 'http://explain.z3950.org/dtd/2.0/',
+            recordData   => '<foo>bar</foo>'
+        )
+    );
+
     my $xml = $response->asXML();
 
     my $diagnostics = $response->diagnostics();

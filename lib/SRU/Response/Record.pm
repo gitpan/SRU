@@ -89,6 +89,10 @@ SRU::Response::Record->mk_accessors( qw(
     extraRecordData
 ) );
 
+=head2 asXML()
+
+=cut
+
 sub asXML {
     my $self = shift;
     return 

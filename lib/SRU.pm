@@ -1,6 +1,9 @@
 package SRU;
 
-our $VERSION = '0.3';
+use strict;
+use warnings;
+
+our $VERSION = '0.4';
 
 =head1 NAME 
 
@@ -77,7 +80,7 @@ in this distribution see the POD in the individual packages:
 
 =item * L<SRU::Request>
 
-=item * L<SRU::Request::Explaint>
+=item * L<SRU::Request::Explain>
 
 =item * L<SRU::Request::Scan>
 
