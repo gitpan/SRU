@@ -17,6 +17,8 @@ lib/SRU/Utils/XMLTest.pm
 Makefile.PL
 MANIFEST
 README
+t/cgi.t
+t/cgi_app.t
 t/diagnostic.t
 t/record.t
 t/request_explain.t
@@ -26,4 +28,4 @@ t/response_explain.t
 t/response_scan.t
 t/response_searchRetrieve.t
 t/term.t
-META.yml                                 Module meta-data (added by MakeMaker)
+META.yml                                Module meta-data (added by MakeMaker)

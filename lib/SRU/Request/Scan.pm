@@ -56,24 +56,34 @@ sub new {
 
 =cut
 
-SRU::Request::Scan->mk_accessors( qw( 
-    base
+my @validParams = qw( 
     version
     scanClause
     responsePosition
     maximumTerms
     stylesheet
     extraRequestData
-) );
+);
 
-=head2 asXML()
+sub validParams { return @validParams; }
 
-=cut
+SRU::Request::Scan->mk_accessors( 'base', @validParams );
 
-sub asXML {
+=head2 cql()
+
+Fetch the root node of the CQL parse tree for the scan clause. 
+
+=cut 
+
+sub cql {
     my $self = shift;
-    ## XXX: need to implement this
-    return '';
+    my $clause = $self->scanClause();
+    return '' unless $clause;
+    my $node;
+    my $parser = CQL::Parser->new();
+    eval { $node = $parser->parse( $clause ) };
+    return $node;
 }
+
 
 1;

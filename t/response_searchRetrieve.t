@@ -52,5 +52,8 @@ OK: {
 
     ok( wellFormedXML($xml), 'asXML() w/ records well formed' );
     like( $xml, qr{\Q<?xml-stylesheet type='text/xsl' href="http://myserver.com/myStyle" ?>\E}, 'found stylsheet in XML' );
+
+    ## look for xCQL
+    like( $xml, qr/<xQuery>/, 'found xQuery tag' );
 }
 

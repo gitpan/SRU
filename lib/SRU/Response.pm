@@ -55,6 +55,11 @@ sub newFromRequest {
     return $response;
 }
 
+=head1 INHERITED METHODS
+
+SRU::Resonse also serves as the base class for the three response types, and
+thus provides some general functionality to the child classes. 
+
 =head2 type()
 
 Returns 'searchRetrieve', 'scan' or 'explain' depending on what type of

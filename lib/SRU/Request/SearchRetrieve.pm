@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use base qw( Class::Accessor SRU::Request );
 use SRU::Utils qw( error );
+use CQL::Parser;
 
 =head1 NAME
 
@@ -37,32 +38,31 @@ sub new {
     return SRU::Request::SearchRetrieve->SUPER::new( \%args );
 }
 
-=head2 version
+=head2 version()
 
-=head2 query
+=head2 query()
 
-=head2 startRecord
+=head2 startRecord()
 
-=head2 maximumRecords
+=head2 maximumRecords()
 
-=head2 recordPacking
+=head2 recordPacking()
 
-=head2 recordSchema
+=head2 recordSchema()
 
-=head2 recordXPath
+=head2 recordXPath()
 
-=head2 resultSetTTL
+=head2 resultSetTTL()
 
-=head2 sortKeys
+=head2 sortKeys()
 
-=head2 stylesheet
+=head2 stylesheet()
 
-=head2 extraRequestData
+=head2 extraRequestData()
 
 =cut 
 
-SRU::Request::SearchRetrieve->mk_accessors( qw( 
-    base
+my @validParams = qw(
     version
     query
     startRecord
@@ -74,16 +74,26 @@ SRU::Request::SearchRetrieve->mk_accessors( qw(
     sortKeys
     stylesheet
     extraRequestData
-) );
+);
 
-=head2 asXML()
+sub validParams { return @validParams };
 
-=cut
+SRU::Request::SearchRetrieve->mk_accessors( 'base', @validParams );
 
-sub asXML {
+=head2 cql()
+
+Fetch the root node of the CQL parse tree for the query.
+
+=cut 
+
+sub cql {
     my $self = shift;
-    ## XXX: need to implement this
-    return '';
+    my $query = $self->query();
+    return '' unless $query;
+    my $node;
+    my $parser = CQL::Parser->new();
+    eval { $node = $parser->parse( $query ) };
+    return $node;
 }
 
 1;

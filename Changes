@@ -1,3 +1,13 @@
+v0.5 Sat Dec  4 22:20:40 CST 2004
+- CGI::Application framework courtesy of Brian Cassidy (who now shares
+  ownership of this module).
+- Updated Makefile.PL to include new dependencies.
+- Explain is now the default response.
+- Responses automatically have an echo section added to their XML when using 
+  the newFromRequest() factory method.
+- searchRetrieve and scan requests parse CQL where appropriate using
+  CQL::Parser.
+
 v0.4 Tue Nov 16 20:12:34 CST 2004
 - doc fixes and tuneups from Brian Cassidy
 

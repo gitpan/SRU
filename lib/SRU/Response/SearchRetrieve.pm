@@ -141,8 +141,7 @@ sub asXML {
     my $stylesheet = $self->stylesheetXML();
     my $version = element( 'version', $self->version() );
     my $diagnostics = $self->diagnosticsXML();
-    my $echoedSearchRetrieveRequest = element( 'echoedSearchRetrieveRequest',
-        $self->echoedSearchRetrieveRequest() );
+    my $echoedSearchRetrieveRequest = $self->echoedSearchRetrieveRequest();
 
     my $xml = 
 <<SEARCHRETRIEVE_XML;

@@ -81,8 +81,7 @@ SRU::Response::Explain->mk_accessors( qw(
 sub asXML {
     my $self = shift;
     my $stylesheet = $self->stylesheetXML();
-    my $echoedExplainRequest = element( 'echoedExplainRequest', 
-        $self->echoedExplainRequest() );
+    my $echoedExplainRequest = $self->echoedExplainRequest();
     my $diagnostics = $self->diagnosticsXML();
     my $xml = 
 <<"EXPLAIN_XML";
@@ -95,7 +94,7 @@ $stylesheet
 <recordPacking>xml</recordPacking>
 <recordData>
 EXPLAIN_XML
-    $xml .= $self->record->asXML();
+    $xml .= $self->record->asXML() if $self->record();
     $xml .= 
 <<EXPLAIN_XML;
 </recordData>

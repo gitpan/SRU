@@ -2,6 +2,7 @@ use strict;
 use warnings;
 use Test::More qw( no_plan );
 use URI;
+use XML::Simple;
 
 use_ok( "SRU::Request" );
 use_ok( "SRU::Request::Scan" );
@@ -51,4 +52,20 @@ NO_BASE: {
     is( $SRU::Error, 'missing base parameter', 'base error' );
     $SRU::Error = undef;
 }
+
+AS_XML: {
+    my $request = SRU::Request::Scan->newFromURI( $url );
+    my $xml = XMLin( $request->asXML(), KeepRoot => 1 );
+    is( $xml->{echoedScanRequest}{version}, '1.1', 
+            'found version in XML' );
+    is( $xml->{echoedScanRequest}{scanClause}, '/dc.title="cat"', 
+            'scanClause found in XML' );
+    is( $xml->{echoedScanRequest}{responsePosition}, '3', 
+            'responsePosition found in XML' );
+    is( $xml->{echoedScanRequest}{maximumTerms}, '50', 
+            'maximum terms found in XML' );
+    is( $xml->{echoedScanRequest}{stylesheet}, 'http://myserver.com/myStyle', 
+        'styleSheet found in XML' );
+}
+    
 

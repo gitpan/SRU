@@ -3,7 +3,7 @@ package SRU;
 use strict;
 use warnings;
 
-our $VERSION = '0.4';
+our $VERSION = '0.5';
 
 =head1 NAME 
 
@@ -36,6 +36,7 @@ SRU - Search and Retrieval by URL
     ## print out the response
     print $cgi->header( -type => 'text/xml' );
     print $response->asXML();
+
 
 =head1 DESCRIPTION
 
@@ -93,6 +94,8 @@ in this distribution see the POD in the individual packages:
 =item * L<SRU::Response::Scan>
 
 =item * L<SRU::Response::SearchRetrieve>
+
+=item * L<SRU::Application>
 
 =back
 

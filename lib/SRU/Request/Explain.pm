@@ -58,22 +58,16 @@ Returns the base location of the SRU service.
 
 =cut
 
-SRU::Request::Explain->mk_accessors( qw( 
-    base
-    version
-    recordPacking
-    stylesheet
-    extraRequestData
-) );
+my @validParams = qw( 
+    version 
+    recordPacking 
+    stylesheet 
+    extraRequestData 
+);
 
-=head2 asXML()
+# no pod since this is used in SRU::Request
+sub validParams { return @validParams };
 
-=cut
-
-sub asXML {
-    my $self = shift;
-    ## XXX: need to implement this
-    return '';
-}
+SRU::Request::Explain->mk_accessors( 'base', @validParams ); 
 
 1;

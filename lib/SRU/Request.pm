@@ -7,6 +7,7 @@ use SRU::Request::Explain;
 use SRU::Request::SearchRetrieve;
 use SRU::Request::Scan;
 use SRU::Utils qw( error );
+use SRU::Utils::XML qw( escape );
 
 =head1 NAME
 
@@ -86,7 +87,44 @@ sub newFromCGI {
 
     ## We want either an actual CGI object, or at least an object that gives us url()
     return error( "invalid CGI object" ) unless UNIVERSAL::isa( $cgi, 'CGI' ) or $cgi->can( 'url' );
-    return $class->newFromURI( $cgi->url );
+    return $class->newFromURI( $cgi->url( -full => 1, -path => 1, -query => 1 ) );
+}
+
+=head2 asXML()
+
+Used to generate <echoedExplainRequest>, <echoedSearchRetrieveRequest> and
+<echoedScanRequest> elements in the response.
+
+=cut
+
+sub asXML {
+    my $self = shift;
+
+    ## extract the type of request from the type of object
+    my ($type) = ref($self) =~ /^SRU::Request::(.*)$/;
+    $type = "echoed${type}Request";
+
+    ## build the xml
+    my $xml = "<$type>";
+
+    ## add xml for each param if it is available
+    foreach my $param ( $self->validParams() ) {
+        $xml .= "<$param>" . escape($self->$param) . "</$param>" 
+            if $self->$param;
+    }
+    ## add XCQL if appropriate
+    if ( $self->can( 'cql' ) ) {
+        my $cql = $self->cql();
+        if ( $cql ) {
+            my $xcql = $cql->toXCQL(0);
+            chomp( $xcql );
+            $xcql =~ s/>\n *</></g; # collapse whitespace
+            $xml .= "<xQuery>$xcql</xQuery>";
+        }
+    }
+
+    $xml .= "</$type>";
+    return $xml;
 }
 
 1;

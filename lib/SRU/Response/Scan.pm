@@ -112,7 +112,7 @@ sub asXML {
 
     $xml .= $self->diagnosticsXML();
     $xml .= elementNoEscape( 'extraResponseData', $self->extraResponseData() );
-    $xml .= element( 'echoedScanRequest', $self->echoedScanRequest() );
+    $xml .= $self->echoedScanRequest();
     $xml .= "</scanResponse>";
 
     return( $xml );

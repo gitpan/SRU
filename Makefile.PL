@@ -12,7 +12,10 @@ WriteMakefile(
     'AUTHOR'		=> 'Ed Summers <ehs@pobox.com>',
     'PREREQ_PM'		=> { 
                             'XML::LibXML'       => '',
+                            'XML::Simple'       => '',
                             'URI'               => '',
                             'Class::Accessor'   => '',
+                            'CGI::Application'  => '',
+                            'CQL::Parser'       => '',
 			   },
 );
