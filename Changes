@@ -1,5 +1,10 @@
-Sun Sep  5 08:06:49 CDT 2004
+v0.3 Sun Sep  5 15:17:35 CDT 2004
+- fixed SRU::Request::newFromCGI() and added test t/cgi.t
+- fixed stylesheet handling in response objects
+- fixed diagnostics handling
+
+v0.2 Sun Sep  5 08:06:49 CDT 2004
 - updated docs
 
-Sun Sep  4 22:05:56 CDT 2004
+v0.1 Sun Sep  4 22:05:56 CDT 2004
 - initial release

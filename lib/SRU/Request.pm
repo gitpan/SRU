@@ -84,10 +84,8 @@ A factory method for creating a request object from a CGI object.
 sub newFromCGI {
     my ($class,$cgi) = @_;
     return error( "invalid CGI object" ) if ! UNIVERSAL::isa( $cgi, 'CGI' );
-    return 
-        $class->newFromURI( 
-            URI->new( $cgi->script_name() . '?' .  $cgi->query_string() )
-        );
+    return $class->newFromURI( 'http://'.  $cgi->server_name().
+        $cgi->script_name() .  '?' .  $cgi->query_string() );
 }
 
 1;

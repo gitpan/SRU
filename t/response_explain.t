@@ -13,12 +13,16 @@ OK: {
     my $request = SRU::Request->newFromURI( $url );
     isa_ok( $request, 'SRU::Request::Explain' );
 
+    is( $request->stylesheet(), 'http://www.example.com/style.xsl', 
+        'stylesheet()' );
+
     my $response = SRU::Response->newFromRequest( $request );
     isa_ok( $response, 'SRU::Response::Explain' );
     is( $response->type(), 'explain', 'type()' );
 
     $response->record( "<foo>bar</foo>" );
     my $xml = $response->asXML();
+    like( $xml, qr{\Q<?xml-stylesheet type='text/xsl' href="http://www.example.com/style.xsl" ?>\E}, 'found stylsheet in XML' ); 
 
     ok( wellFormedXML($xml), "asXML()" );
 }
@@ -40,5 +44,6 @@ MISSING_VERSION: {
 
     is( $diagnostics->[0]->details(), 'version', 'missing version diagnostic' );
     ok( wellFormedXML($xml), "asXML()" );
+    print $xml;
 }
 

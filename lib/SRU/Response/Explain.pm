@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use base qw( Class::Accessor SRU::Response );
 use SRU::Response::Diagnostic;
+use SRU::Utils::XML qw( element );
 
 =head1 NAME
 
@@ -36,7 +37,7 @@ sub new {
         diagnostics             => [],
         extraResponseData       => '',
         echoedExplainRequest    => $request->asXML(),
-        stylesheet              => '',
+        stylesheet              => $request->stylesheet(),
     } );
 
     $self->addDiagnostic( SRU::Response::Diagnostic->newFromCode(7,'version') ) 
@@ -76,6 +77,9 @@ SRU::Response::Explain->mk_accessors( qw(
 sub asXML {
     my $self = shift;
     my $stylesheet = $self->stylesheetXML();
+    my $echoedExplainRequest = element( 'echoedExplainRequest', 
+        $self->echoedExplainRequest() );
+    my $diagnostics = $self->diagnosticsXML();
     my $xml = 
 <<"EXPLAIN_XML";
 <?xml version="1.0"?>
@@ -92,6 +96,8 @@ EXPLAIN_XML
 <<EXPLAIN_XML;
 </recordData>
 </record>
+$echoedExplainRequest
+$diagnostics
 </explainResponse>
 EXPLAIN_XML
     return $xml;

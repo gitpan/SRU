@@ -6,6 +6,7 @@ use SRU::Response::Explain;
 use SRU::Response::Scan;
 use SRU::Response::SearchRetrieve;
 use SRU::Utils qw( error );
+use SRU::Utils::XML qw( stylesheet );
 
 =head1 NAME
 
@@ -85,7 +86,7 @@ sub addDiagnostic {
 sub diagnosticsXML {
     my $self = shift;
     my $xml = '';
-    foreach my $d ( @{ $self->{diagnosticsStack} } ) {
+    foreach my $d ( @{ $self->diagnostics() } ) {
         $xml .= $d->asXML();
     }
     return $xml;

@@ -3,7 +3,7 @@ package SRU::Response::SearchRetrieve;
 use strict;
 use warnings;
 use base qw( Class::Accessor SRU::Response );
-use SRU::Utils::XML qw( escape );
+use SRU::Utils::XML qw( element );
 use SRU::Utils qw( error );
 use SRU::Response::Record;
 
@@ -51,6 +51,7 @@ sub new {
         diagnostics                     => [],
         extraResponseData               => '',
         echoedSearchRetrieveRequest     => $request->asXML(),
+        stylesheet                      => $request->stylesheet(),
     } );
 
     $self->addDiagnostic( SRU::Response::Diagnostic->newFromCode(7,'version') )
@@ -138,14 +139,17 @@ sub asXML {
 
     my $numberOfRecords = $self->numberOfRecords();
     my $stylesheet = $self->stylesheetXML();
+    my $version = element( 'version', $self->version() );
     my $diagnostics = $self->diagnosticsXML();
+    my $echoedSearchRetrieveRequest = element( 'echoedSearchRetrieveRequest',
+        $self->echoedSearchRetrieveRequest() );
 
     my $xml = 
 <<SEARCHRETRIEVE_XML;
 <?xml version='1.0' ?>
 $stylesheet
 <searchRetrieveResponse>
-<version>1.1</version>
+$version
 <numberOfRecords>$numberOfRecords</numberOfRecords>
 <records>
 SEARCHRETRIEVE_XML
@@ -159,9 +163,7 @@ SEARCHRETRIEVE_XML
 <<SEARCHRETRIEVE_XML;
 </records>
 $diagnostics
-<echoedSearchRetrieveRequest>
-<query>chemistry</query>
-</echoedSearchRetrieveRequest>
+$echoedSearchRetrieveRequest
 </searchRetrieveResponse>
 SEARCHRETRIEVE_XML
 

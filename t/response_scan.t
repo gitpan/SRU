@@ -46,4 +46,5 @@ OK: {
     like( $xml, qr{<value>Apollo Creed</value>}, 'found term 1' );
     like( $xml, qr{<value>Rocky Balboa</value>}, 'found term 2' );
     
+    like( $xml, qr{\Q<?xml-stylesheet type='text/xsl' href="http://myserver.com/myStyle" ?>\E}, 'found stylsheet in XML' ); 
 }

@@ -39,6 +39,7 @@ sub new {
         diagnostics         => [],
         extraResponseData   => '',
         echoedScanRequest   => $request->asXML(),
+        stylesheet          => $request->stylesheet()
     } );
 
     $self->addDiagnostic( SRU::Response::Diagnostic->newFromCode(7,'version') )
@@ -85,6 +86,7 @@ SRU::Response::Scan->mk_accessors( qw(
     diagnostics
     extraResponseData
     echoedScanRequest
+    stylesheet
 ) );
 
 =head2 asXML()
@@ -93,22 +95,27 @@ SRU::Response::Scan->mk_accessors( qw(
 
 sub asXML {
     my $self = shift;
-    my $xml = element( 'version', $self->version() );
+    my $xml = 
+        "<?xml version='1.0' ?>\n" . 
+        $self->stylesheetXML() . "\n" . 
+        "<scanResponse>\n" . 
+        element( 'version', $self->version() );
 
-    ## add all the terms
-    foreach my $term ( @{ $self->terms() } ) { 
-        $xml .= $term->asXML(); 
+    ## add all the terms if there are some
+    if ( @{ $self->terms() } ) {
+        $xml .= "<terms>\n";
+        foreach my $term ( @{ $self->terms() } ) { 
+            $xml .= $term->asXML(); 
+        }
+        $xml .= "</terms>\n";
     }
 
-    ## add any diagnostics we might have
-    foreach my $diag ( @{ $self->diagnostics() } ) { 
-        $xml .= $diag->asXML(); 
-    }
+    $xml .= $self->diagnosticsXML();
+    $xml .= elementNoEscape( 'extraResponseData', $self->extraResponseData() );
+    $xml .= element( 'echoedScanRequest', $self->echoedScanRequest() );
+    $xml .= "</scanResponse>";
 
-    $xml .= elementNoEscape( $self->extraResponseData() );
-    $xml .= element( $self->echoedScanRequest() );
-
-    return elementNoEscape( 'terms', $xml );
+    return( $xml );
 }
 
 1;

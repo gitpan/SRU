@@ -51,6 +51,6 @@ OK: {
     like( $xml, qr{<recordPosition>2</recordPosition>}, 'recordPosition() 2' );
 
     ok( wellFormedXML($xml), 'asXML() w/ records well formed' );
-
+    like( $xml, qr{\Q<?xml-stylesheet type='text/xsl' href="http://myserver.com/myStyle" ?>\E}, 'found stylsheet in XML' );
 }
 
