@@ -65,8 +65,11 @@ sub newFromURI {
         $request = SRU::Request::Scan->new( %query );
     } elsif ( $operation eq 'searchRetrieve' ) {
         $request = SRU::Request::SearchRetrieve->new( %query );
+    } elsif ( $operation eq 'explain' ) {
+        $request = SRU::Request::Explain->new( %query );
     } else {
         $request = SRU::Request::Explain->new( %query );
+        $request->missingOperator(1);
     }
 
     return $request;

@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 16; 
+use Test::More tests => 19; 
 use Test::Exception;
 use SRU::Utils::XMLTest qw( wellFormedXML ); 
 
@@ -69,5 +69,15 @@ INVALID_RECORD: {
         qr/must pass in a SRU::Response::Record/, 
         "caught invalid parameter passed to record()";
 }
+
+MISSING_OPERATOR: {
+    my $request = SRU::Request->newFromURI( '/sru?version=1.1' );
+    my $response = SRU::Response->newFromRequest( $request );
+    my $diagnostics = $response->diagnostics();
+    is( @$diagnostics, 1, 'found 1 diagnostic' );
+    is( $diagnostics->[0]->details(), 'operator', 'missing operator' );
+    ok( wellFormedXML($response->asXML()), "asXML()" );
+}
+
 
 

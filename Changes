@@ -1,3 +1,7 @@
+v0.85 Mon Dec 20 21:53:06 CST 2004
+- added diagnostic when a default explain is returned when no operator was
+  specified
+
 v0.8 Fri Dec 17 11:32:40 AST 2004
 - renamed SRU::Application to SRU::Server
 

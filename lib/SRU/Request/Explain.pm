@@ -61,6 +61,6 @@ my @validParams = qw(
 # no pod since this is used in SRU::Request
 sub validParams { return @validParams };
 
-SRU::Request::Explain->mk_accessors( @validParams ); 
+SRU::Request::Explain->mk_accessors( @validParams, 'missingOperator' ); 
 
 1;
