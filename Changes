@@ -1,3 +1,6 @@
+v0.88 Wed Feb  2 10:28:37 CST 2005
+- added resultSetId and resultSetIdleTime to searchRetrieve output
+
 v0.87 Tue Feb  1 12:17:54 CST 2005
 - added ability to set numberOfRecords() in searchRetrieve request: 
   thanks Bernd Diekmann

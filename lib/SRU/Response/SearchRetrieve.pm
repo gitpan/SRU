@@ -145,6 +145,8 @@ sub asXML {
     my $version = element( 'version', $self->version() );
     my $diagnostics = $self->diagnosticsXML();
     my $echoedSearchRetrieveRequest = $self->echoedSearchRetrieveRequest();
+    my $resultSetIdleTime = $self->resultSetIdleTime();
+    my $resultSetId = $self->resultSetId();
 
     my $xml = 
 <<SEARCHRETRIEVE_XML;
@@ -153,8 +155,13 @@ $stylesheet
 <searchRetrieveResponse>
 $version
 <numberOfRecords>$numberOfRecords</numberOfRecords>
-<records>
 SEARCHRETRIEVE_XML
+
+    $xml .= "<resultSetId>$resultSetId</resultSetId>" 
+        if defined($resultSetId);
+    $xml .= "<resultSetIdleTime>$resultSetIdleTime</resultSetIdleTime>\n"
+        if defined($resultSetIdleTime);
+    $xml .= "<records>\n";
 
     ## now add each record
     foreach my $r ( @{ $self->{records} } ) {
