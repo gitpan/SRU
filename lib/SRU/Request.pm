@@ -31,8 +31,8 @@ they contain.
 
 =head2 newFromURI()
 
-makeRequest() is a factory method which you pass a complete SRU url. 
-makeRequest() will return an appropriate object for the type of request being 
+newFromURI() is a factory method which you pass a complete SRU url. 
+newFromURI() will return an appropriate object for the type of request being 
 conducted:
 
 =over 4
@@ -57,17 +57,16 @@ sub newFromURI {
     if ( ! UNIVERSAL::isa( $uri, 'URI' ) ) { $uri = URI->new($uri); }
     return error( "invalid uri: $uri" ) if ! UNIVERSAL::isa( $uri, 'URI' ); 
 
-    my $base      = $uri->scheme . '://' . $uri->host() . $uri->path();
     my %query     = $uri->query_form();
     my $operation = $query{operation} || 'explain';
 
     my $request;
     if ( $operation eq 'scan' ) { 
-        $request = SRU::Request::Scan->new( base => $base, %query );
+        $request = SRU::Request::Scan->new( %query );
     } elsif ( $operation eq 'searchRetrieve' ) {
-        $request = SRU::Request::SearchRetrieve->new( base => $base, %query );
-    } elsif ( $operation eq 'explain' ) {
-        $request = SRU::Request::Explain->new( base => $base, %query );
+        $request = SRU::Request::SearchRetrieve->new( %query );
+    } else {
+        $request = SRU::Request::Explain->new( %query );
     }
 
     return $request;
@@ -85,9 +84,17 @@ A factory method for creating a request object from a CGI object.
 sub newFromCGI {
     my ($class,$cgi) = @_;
 
-    ## We want either an actual CGI object, or at least an object that gives us url()
-    return error( "invalid CGI object" ) unless UNIVERSAL::isa( $cgi, 'CGI' ) or $cgi->can( 'url' );
-    return $class->newFromURI( $cgi->url( -full => 1, -path => 1, -query => 1 ) );
+    ## We want either an actual CGI object
+    return error( "invalid CGI object" ) unless UNIVERSAL::isa( $cgi, 'CGI' );
+
+    ## we must have ampersands between query string params, but lets
+    ## make sure we don't screw anybody else up
+    my $saved = $CGI::USE_PARAM_SEMICOLONS; 
+    $CGI::USE_PARAM_SEMICOLONS = 0;
+    my $url = $cgi->self_url();
+    $CGI::USE_PARAM_SEMICOLONS = $saved;
+
+    return $class->newFromURI( $url );
 }
 
 =head2 asXML()

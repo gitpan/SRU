@@ -10,7 +10,6 @@ my $url = 'http://myserver.com/myurl?operation=explain&version=1.0&recordPacking
 
 CONSTRUCTOR: {
     my $request = SRU::Request::Explain->new(
-        base            => 'http://myserver.com/myurl',
         version         => '1.0',
         recordPacking   => 'xml',
         stylesheet      => 'http://www.example.com/style.xsl' );
@@ -18,7 +17,6 @@ CONSTRUCTOR: {
     is( $request->recordPacking(), 'xml', 'recordPacking()' );
     is( $request->stylesheet(), 'http://www.example.com/style.xsl',
         'stylesheet()');
-    is( $request->base(), 'http://myserver.com/myurl', 'base()' );
 }
 
 FROM_URI: {
@@ -28,7 +26,6 @@ FROM_URI: {
     is( $request->recordPacking(), 'xml', 'recordPacking()' );
     is( $request->stylesheet(), 'http://www.example.com/style.xsl',
         'stylesheet()');
-    is( $request->base(), 'http://myserver.com/myurl', 'base()' );
 }
 
 DEFAULT_RESPONSE: {
@@ -42,14 +39,6 @@ FROM_STRING: {
     is( $request->recordPacking(), 'xml', 'recordPacking()' );
     is( $request->stylesheet(), 'http://www.example.com/style.xsl',
         'stylesheet()');
-    is( $request->base(), 'http://myserver.com/myurl', 'base()' );
-}
-
-NO_BASE: {
-    ok( ! $SRU::Error, '$SRU::Error not populated' );
-    my $request = SRU::Request::Explain->new();
-    ok( ! $request, 'new() returned undef' );
-    is( $SRU::Error, 'missing base parameter', 'base error' );
 }
 
 XML: {

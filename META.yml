@@ -1,15 +1,17 @@
+# http://module-build.sourceforge.net/META-spec.html
 #XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
 name:         SRU
-version:      0.6
+version:      0.7
 version_from: lib/SRU.pm
 installdirs:  site
 requires:
-    CQL::Parser:                   0.3
-    XML::Simple:                   
-    URI:                           
     CGI::Application:              
-    XML::LibXML:                   
     Class::Accessor:               
+    CQL::Parser:                   0.3
+    Test::Exception:               
+    URI:                           
+    XML::LibXML:                   
+    XML::Simple:                   
 
 distribution_type: module
-generated_by: ExtUtils::MakeMaker version 6.12
+generated_by: ExtUtils::MakeMaker version 6.21

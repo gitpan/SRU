@@ -23,11 +23,10 @@ SRU::Request::Scan is a class for representing SRU 'scan' requests.
 
 =head2 new()
 
-The constructor, which you can pass the parameters: base, version, scanClause
+The constructor, which you can pass the parameters: version, scanClause
 responsePosition, maximumTerms, stylesheet, extraRequestData.
 
     my $request = SRU::Request::Explain->new( 
-        base        => 'http://www.example.com/sru',
         version     => '1.1',
         scanClause  => 'horses',
     );
@@ -36,11 +35,8 @@ responsePosition, maximumTerms, stylesheet, extraRequestData.
 
 sub new {
     my ($class,%args) = @_;
-    return error( "missing base parameter" ) if ! exists( $args{base} );
     return $class->SUPER::new( \%args );
 }
-
-=head2 base()
 
 =head2 version()
 
@@ -67,7 +63,7 @@ my @validParams = qw(
 
 sub validParams { return @validParams; }
 
-SRU::Request::Scan->mk_accessors( 'base', @validParams );
+SRU::Request::Scan->mk_accessors( @validParams );
 
 =head2 cql()
 

@@ -3,7 +3,7 @@ package SRU;
 use strict;
 use warnings;
 
-our $VERSION = '0.6';
+our $VERSION = '0.7';
 
 =head1 NAME 
 
@@ -103,6 +103,16 @@ Questions and comments are more than welcome. This software was developed as
 part of a National Science Foundation grant for building distributed library
 systems in the Ockham Project. More about Ockham can be found at
 http://www.ockham.org.
+
+=head1 TODO
+
+=over 4 
+
+=item * handle CQL parsing errors
+
+=item * better argument checking in response constructors
+
+=back
 
 =cut
 

@@ -14,7 +14,6 @@ SRU::Request::SearchRetrieve - A class for representing SRU searchRetrieve reque
 
     ## creating a new request
     my $request = SRU::Request::SearchRetrieve->new(
-        base    => 'http://www.example.com/sru',
         version => '1.1',
         query   => 'kirk and spock' );
 
@@ -33,8 +32,6 @@ The version and query parameters are mandatory.
 
 sub new {
     my ($class,%args) = @_;
-    ## check required parameters.
-    return error( "missing base parameter" ) if ! exists( $args{base} );
     return SRU::Request::SearchRetrieve->SUPER::new( \%args );
 }
 
@@ -78,7 +75,7 @@ my @validParams = qw(
 
 sub validParams { return @validParams };
 
-SRU::Request::SearchRetrieve->mk_accessors( 'base', @validParams );
+SRU::Request::SearchRetrieve->mk_accessors( @validParams );
 
 =head2 cql()
 

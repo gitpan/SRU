@@ -1,7 +1,7 @@
 use strict;
 use warnings;
-use Test::More qw( no_plan );
-use URI;
+use Test::More tests => 16; 
+use Test::Exception;
 use SRU::Utils::XMLTest qw( wellFormedXML ); 
 
 use_ok( 'SRU::Request::Explain' );
@@ -27,6 +27,7 @@ OK: {
         )
     );
     my $xml = $response->asXML();
+    like( $xml, qr{<foo>bar</foo>}, 'found recordData' );
     like( $xml, qr{\Q<?xml-stylesheet type='text/xsl' href="http://www.example.com/style.xsl" ?>\E}, 'found stylsheet in XML' ); 
 
     ok( wellFormedXML($xml), "asXML()" );
@@ -55,6 +56,18 @@ MISSING_VERSION: {
 
     is( $diagnostics->[0]->details(), 'version', 'missing version diagnostic' );
     ok( wellFormedXML($xml), "asXML()" );
-    print $xml;
 }
+
+INVALID_RECORD: {
+    my $url = 'http://myserver.com/myurl?operation=explain';
+    my $request = SRU::Request->newFromURI( $url );
+    isa_ok( $request, 'SRU::Request::Explain' );
+    my $response = SRU::Response->newFromRequest( $request );
+
+    throws_ok 
+        { $response->record( '<explain>Explain info here</explain>' ) }
+        qr/must pass in a SRU::Response::Record/, 
+        "caught invalid parameter passed to record()";
+}
+
 

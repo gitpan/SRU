@@ -4,7 +4,9 @@ use strict;
 use warnings;
 use base qw( Class::Accessor SRU::Response );
 use SRU::Response::Diagnostic;
+use SRU::Utils qw( error );
 use SRU::Utils::XML qw( element );
+use Carp qw( croak );
 
 =head1 NAME
 
@@ -67,12 +69,21 @@ for the response.
 
 SRU::Response::Explain->mk_accessors( qw(
     version 
-    record
     diagnostics
     extraResponseData
     echoedExplainRequest
     stylesheet
 ) );
+
+sub record {
+    my ( $self, $record ) = @_;
+    if ( $record ) {
+        croak( "must pass in a SRU::Response::Record object" )
+            if ref($record) ne 'SRU::Response::Record';
+        $self->{record} = $record;
+    }
+    return $self->{record};
+}
 
 =head2 asXML()
 
@@ -83,22 +94,14 @@ sub asXML {
     my $stylesheet = $self->stylesheetXML();
     my $echoedExplainRequest = $self->echoedExplainRequest();
     my $diagnostics = $self->diagnosticsXML();
+    my $record = $self->record() ? $self->record()->asXML() : '';
     my $xml = 
 <<"EXPLAIN_XML";
 <?xml version="1.0"?>
 $stylesheet
 <explainResponse>
 <version>1.1</version>
-<record>
-<recordSchema>http://explain.z3950.org/dtd/2.0/</recordSchema>
-<recordPacking>xml</recordPacking>
-<recordData>
-EXPLAIN_XML
-    $xml .= $self->record->asXML() if $self->record();
-    $xml .= 
-<<EXPLAIN_XML;
-</recordData>
-</record>
+$record
 $echoedExplainRequest
 $diagnostics
 </explainResponse>

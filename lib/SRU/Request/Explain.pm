@@ -12,8 +12,7 @@ SRU::Request::Explain - A class for representing SRU explain requests
 =head1 SYNOPSIS
 
     ## creating a new request
-    my $request = SRU::Request::Explain->new( 
-        base=>'http://www.example.com/sru' );
+    my $request = SRU::Request::Explain->new();
 
 =head1 DESCRIPTION
 
@@ -24,11 +23,10 @@ Explain requests essentially ask the server to describe its services.
 
 =head2 new()
 
-The constructor, which you must pass the parameter base and the optional 
-parameters: version, recordPacking, stylesheet, and extraRequestData parameters.
+The constructor, which you can pass the optional parameters parameters: 
+version, recordPacking, stylesheet, and extraRequestData parameters.
 
     my $request = SRU::Request::Explain->new( 
-        base        => 'http://www.example.com/sru', 
         version     => '1.1',
         stylesheet  => 'http://www.example.com/styles/mystyle.xslt'
     );
@@ -40,13 +38,8 @@ to create requests, instead of calling new() yourself.
 
 sub new {
     my ($class,%args) = @_;
-    return error( "missing base parameter" ) if ! exists( $args{base} );
     return SRU::Request::Explain->SUPER::new( \%args );
 }
-
-=head2 base()
-
-Returns the base location of the SRU service.
 
 =head2 version()
 
@@ -68,6 +61,6 @@ my @validParams = qw(
 # no pod since this is used in SRU::Request
 sub validParams { return @validParams };
 
-SRU::Request::Explain->mk_accessors( 'base', @validParams ); 
+SRU::Request::Explain->mk_accessors( @validParams ); 
 
 1;

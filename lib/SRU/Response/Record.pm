@@ -4,12 +4,14 @@ use strict;
 use warnings;
 use SRU::Utils qw( error );
 use SRU::Utils::XML qw( element elementNoEscape );
+use Carp qw( croak );
 
 use base qw( Class::Accessor );
 
 =head1 NAME
 
-SRU::Response::Record - A class for representing a result record in a searchRetrieve response
+SRU::Response::Record - A class for representing a result record in a
+searchRetrieve response.
 
 =head1 SYNOPSIS
 
@@ -70,9 +72,9 @@ sub new {
     my ($class,%args) = @_;
 
     ## make sure required parameters are sent
-    return error( "must supply recordSchema in call to new()" ) 
+    croak( "must supply recordSchema in call to new()" ) 
         if ! exists( $args{recordSchema} );
-    return error( "must supply recordData in call to new()" )
+    croak( "must supply recordData in call to new()" )
         if ! exists( $args{recordData} );
 
     ## set some defaults
