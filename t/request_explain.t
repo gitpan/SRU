@@ -2,7 +2,6 @@ use strict;
 use warnings;
 use Test::More qw( no_plan );
 use URI;
-use XML::Simple;
 
 use_ok( 'SRU::Request::Explain' );
 
@@ -10,6 +9,7 @@ my $url = 'http://myserver.com/myurl?operation=explain&version=1.0&recordPacking
 
 CONSTRUCTOR: {
     my $request = SRU::Request::Explain->new(
+        base            => 'http://myserver.com/myurl',
         version         => '1.0',
         recordPacking   => 'xml',
         stylesheet      => 'http://www.example.com/style.xsl' );
@@ -17,7 +17,7 @@ CONSTRUCTOR: {
     is( $request->recordPacking(), 'xml', 'recordPacking()' );
     is( $request->stylesheet(), 'http://www.example.com/style.xsl',
         'stylesheet()');
-    is( $request->type(), 'explain', 'type()' );
+    is( $request->base(), 'http://myserver.com/myurl', 'base()' );
 }
 
 FROM_URI: {
@@ -27,11 +27,7 @@ FROM_URI: {
     is( $request->recordPacking(), 'xml', 'recordPacking()' );
     is( $request->stylesheet(), 'http://www.example.com/style.xsl',
         'stylesheet()');
-}
-
-DEFAULT_RESPONSE: {
-    my $request = SRU::Request->newFromURI( 'http://myserver.com/myurl' );
-    isa_ok( $request, 'SRU::Request::Explain' );
+    is( $request->base(), 'http://myserver.com/myurl', 'base()' );
 }
 
 FROM_STRING: {
@@ -40,17 +36,14 @@ FROM_STRING: {
     is( $request->recordPacking(), 'xml', 'recordPacking()' );
     is( $request->stylesheet(), 'http://www.example.com/style.xsl',
         'stylesheet()');
+    is( $request->base(), 'http://myserver.com/myurl', 'base()' );
 }
 
-XML: {
-    my $request = SRU::Request->newFromURI( $url );
-    my $xml = XMLin( $request->asXML(), KeepRoot => 1 );
-    is( $xml->{echoedExplainRequest}{version}, '1.0', 
-        'got version in XML' );
-    is( $xml->{echoedExplainRequest}{recordPacking}, 'xml', 
-        'got recordPacking in XML' );
-    is( $xml->{echoedExplainRequest}{stylesheet},
-        'http://www.example.com/style.xsl', 'got stylesheet in XML' );
+NO_BASE: {
+    ok( ! $SRU::Error, '$SRU::Error not populated' );
+    my $request = SRU::Request::Explain->new();
+    ok( ! $request, 'new() returned undef' );
+    is( $SRU::Error, 'missing base parameter', 'base error' );
 }
 
 

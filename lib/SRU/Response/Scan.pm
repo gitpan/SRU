@@ -1,88 +1,13 @@
 package SRU::Response::Scan;
-{
-  $SRU::Response::Scan::VERSION = '1.01';
-}
-#ABSTRACT: A class for representing SRU scan responses
 
 use strict;
 use warnings;
 use base qw( Class::Accessor SRU::Response );
 use SRU::Utils::XML qw( element elementNoEscape );
 
-
-sub new {
-    my ($class,$request) = @_;
-    return error( "must pass in SRU::Request::Scan object to new()" )
-        if ! ref($request) or ! $request->isa( 'SRU::Request::Scan' );
-
-    my $self = $class->SUPER::new( {
-        version             => $request->version(),
-        terms               => [],
-        diagnostics         => [],
-        extraResponseData   => '',
-        echoedScanRequest   => $request->asXML(),
-        stylesheet          => $request->stylesheet()
-    } );
-
-    $self->addDiagnostic( SRU::Response::Diagnostic->newFromCode(7,'version') )
-        if ! $self->version();
-
-    return $self;
-}
-
-
-sub addTerm {
-    my ($self,$term) = @_;
-    return error( "must pass in SRU::Response::Term object to addTerm()" )
-        if ! $term->isa( "SRU::Response::Term" );
-    push( @{ $self->{terms} }, $term );
-}
-
-
-SRU::Response::Scan->mk_accessors( qw(
-    version
-    terms
-    diagnostics
-    extraResponseData
-    echoedScanRequest
-    stylesheet
-) );
-
-
-sub asXML {
-    my $self = shift;
-    my $xml = 
-        "<?xml version='1.0' ?>\n" . 
-        $self->stylesheetXML() . "\n" . 
-        "<scanResponse xmlns=\"http://www.loc.gov/zing/srw/\">\n" . 
-        element( 'version', $self->version() );
-
-    ## add all the terms if there are some
-    if ( @{ $self->terms() } ) {
-        $xml .= "<terms>\n";
-        foreach my $term ( @{ $self->terms() } ) { 
-            $xml .= $term->asXML(); 
-        }
-        $xml .= "</terms>\n";
-    }
-
-    $xml .= $self->diagnosticsXML();
-    $xml .= elementNoEscape( 'extraResponseData', $self->extraResponseData() );
-    $xml .= $self->echoedScanRequest();
-    $xml .= "</scanResponse>";
-
-    return( $xml );
-}
-
-1;
-
-__END__
-
-=pod
-
 =head1 NAME
 
-SRU::Response::Scan - A class for representing SRU scan responses
+SRU::Response::Scan - class for representing SRU scan responses
 
 =head1 SYNOPSIS
 
@@ -103,6 +28,25 @@ object.
 
 =cut
 
+sub new {
+    my ($class,$request) = @_;
+    return error( "must pass in SRU::Request::Scan object to new()" )
+        if ! ref($request) or ! $request->isa( 'SRU::Request::Scan' );
+
+    my $self = $class->SUPER::new( {
+        version             => $request->version(),
+        terms               => [],
+        diagnostics         => [],
+        extraResponseData   => '',
+        echoedScanRequest   => $request->asXML(),
+    } );
+
+    $self->addDiagnostic( SRU::Response::Diagnostic->newFromCode(7,'version') )
+        if ! $self->version();
+
+    return $self;
+}
+
 =head2 version()
 
 =head2 addTerm()
@@ -112,7 +56,14 @@ must be valid SRU::Response::Term objects.
 
     $response->addTerm( SRU::Response::Term->new( value => 'Foo Fighter' ) );
 
-=cut
+=cut 
+
+sub addTerm {
+    my ($self,$term) = @_;
+    return error( "must pass in SRU::Response::Term object to addTerm()" )
+        if ! $term->isa( "SRU::Response::Term" );
+    push( @{ $self->{terms} }, $term );
+}
 
 =head2 terms()
 
@@ -128,14 +79,36 @@ back when getting the values. If you don't bad things will happen.
 
 =cut
 
+SRU::Response::Scan->mk_accessors( qw(
+    version
+    terms
+    diagnostics
+    extraResponseData
+    echoedScanRequest
+) );
+
 =head2 asXML()
 
 =cut
-=head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by Ed Summers.
+sub asXML {
+    my $self = shift;
+    my $xml = element( 'version', $self->version() );
 
-This is free software; you can redistribute it and/or modify it under
-the same terms as the Perl 5 programming language system itself.
+    ## add all the terms
+    foreach my $term ( @{ $self->terms() } ) { 
+        $xml .= $term->asXML(); 
+    }
 
-=cut
+    ## add any diagnostics we might have
+    foreach my $diag ( @{ $self->diagnostics() } ) { 
+        $xml .= $diag->asXML(); 
+    }
+
+    $xml .= elementNoEscape( $self->extraResponseData() );
+    $xml .= element( $self->echoedScanRequest() );
+
+    return elementNoEscape( 'terms', $xml );
+}
+
+1;

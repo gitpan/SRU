@@ -1,145 +1,16 @@
 package SRU::Response::SearchRetrieve;
-{
-  $SRU::Response::SearchRetrieve::VERSION = '1.01';
-}
-#ABSTRACT: A class for representing SRU searchRetrieve responses
 
 use strict;
 use warnings;
 use base qw( Class::Accessor SRU::Response );
-use SRU::Utils::XML qw( element );
+use SRU::Utils::XML qw( escape );
 use SRU::Utils qw( error );
 use SRU::Response::Record;
 
-
-sub new {
-    my ($class,$request) = @_;
-    return error( 'must pass in a SRU::Request::SearchRetrieve object' )
-        if ! ref($request) or ! $request->isa( 'SRU::Request::SearchRetrieve' );
-
-    my $self =  $class->SUPER::new( {
-        version                         => '1.1',
-        numberOfRecords                 => 0,
-        records                         => [],
-        resultSetId                     => undef,
-        resultSetIdleTime               => undef,
-        nextRecordPosition              => undef,
-        diagnostics                     => [],
-        extraResponseData               => '',
-        echoedSearchRetrieveRequest     => $request->asXML(),
-        stylesheet                      => $request->stylesheet(),
-    } );
-
-    $self->addDiagnostic( SRU::Response::Diagnostic->newFromCode(7,'version') )
-        if ! $self->version();
-
-    $self->addDiagnostic( SRU::Response::Diagnostic->newFromCode(7, 'query') )
-        if ! $request->query();
-
-    return $self;
-}
-
-
-sub numberOfRecords {
-    my ($self,$num) = @_;
-    if ( $num ) { $self->{numberOfRecords} = $num; }
-    return $self->{numberOfRecords};
-}
-
-
-sub addRecord {
-    my ($self,$r) = @_;
-    return if ! $r->isa( 'SRU::Response::Record' );
-    ## set recordPosition if necessary
-    if ( ! $r->recordPosition() ) { 
-        $r->recordPosition( $self->numberOfRecords() + 1 );
-    }
-    $self->{numberOfRecords}++;
-    push( @{ $self->{records} }, $r );
-}
-
-
-
-SRU::Response::SearchRetrieve->mk_accessors( qw(
-    version 
-    records                     
-    resultSetId                 
-    resultSetIdleTime           
-    nextRecordPosition          
-    diagnostics                 
-    extraResponseData           
-    echoedSearchRetrieveRequest 
-    stylesheet
-) );
-
-
-sub asXML {
-    my $self     = shift;
-    my %args     = @_;
-    my $encoding = $args{ encoding };
-
-    my $numberOfRecords = $self->numberOfRecords();
-    my $stylesheet = $self->stylesheetXML();
-    my $version = element( 'version', $self->version() );
-    my $diagnostics = $self->diagnosticsXML();
-    my $echoedSearchRetrieveRequest = $self->echoedSearchRetrieveRequest();
-    my $resultSetIdleTime = $self->resultSetIdleTime();
-    my $resultSetId = $self->resultSetId();
-
-    my $extraResponseData = '<extraResponseData>' . $self->extraResponseData() . '</extraResponseData>';
-    my $xmltitle;
-    if( $encoding ) {
-        $xmltitle = "<?xml version='1.0' encoding='$encoding'?>";
-    }
-    else {
-        $xmltitle = "<?xml version='1.0'?>";
-    }
-
-    my $xml = 
-<<SEARCHRETRIEVE_XML;
-$xmltitle
-$stylesheet
-<searchRetrieveResponse xmlns="http://www.loc.gov/zing/srw/">
-$version
-<numberOfRecords>$numberOfRecords</numberOfRecords>
-SEARCHRETRIEVE_XML
-
-    $xml .= "<resultSetId>$resultSetId</resultSetId>" 
-        if defined($resultSetId);
-    $xml .= "<resultSetIdleTime>$resultSetIdleTime</resultSetIdleTime>\n"
-        if defined($resultSetIdleTime);
-
-    if( $numberOfRecords ) {
-        $xml .= "<records>\n";
-
-        ## now add each record
-        foreach my $r ( @{ $self->{records} } ) {
-            $xml .= $r->asXML()."\n";
-        }
-
-        $xml .= "</records>\n";
-    }
-
-    $xml .=
-<<SEARCHRETRIEVE_XML;
-$diagnostics
-$extraResponseData 
-$echoedSearchRetrieveRequest
-</searchRetrieveResponse>
-SEARCHRETRIEVE_XML
-
-    return $xml;
-}
-
-1;
-
-__END__
-
-=pod
-
 =head1 NAME
 
-SRU::Response::SearchRetrieve - A class for representing SRU searchRetrieve responses
+SRU::Response::SearchRetrieve - class for representing SRU searchRetrieve 
+responses
 
 =head1 SYNOPSIS
 
@@ -165,11 +36,41 @@ should be taken care of.
 
 =cut
 
+sub new {
+    my ($class,$request) = @_;
+    return error( 'must pass in a SRU::Request::SearchRetrieve object' )
+        if ! ref($request) or ! $request->isa( 'SRU::Request::SearchRetrieve' );
+
+    my $self =  $class->SUPER::new( {
+        version                         => $request->version(),
+        numberOfRecords                 => 0,
+        records                         => [],
+        resultSetId                     => undef,
+        resultSetIdleTime               => undef,
+        nextRecordPosition              => undef,
+        diagnostics                     => [],
+        extraResponseData               => '',
+        echoedSearchRetrieveRequest     => $request->asXML(),
+    } );
+
+    $self->addDiagnostic( SRU::Response::Diagnostic->newFromCode(7,'version') )
+        if ! $self->version();
+
+    $self->addDiagnostic( SRU::Response::Diagnostic->newFromCode(7, 'query') )
+        if ! $request->query();
+
+    return $self;
+}
+
 =head2 numberOfRecords()
 
 Returns the number of results associated with the object.
 
-=cut
+=cut 
+
+sub numberOfRecords {
+    return scalar( @{ shift->{records} } );
+}
 
 =head2 addRecord()
 
@@ -182,13 +83,23 @@ undef and $SRU::Error will be populated appropriately.
 
 =cut
 
+sub addRecord {
+    my ($self,$r) = @_;
+    return if ! $r->isa( 'SRU::Response::Record' );
+    ## set recordPosition if necessary
+    if ( ! $r->recordPosition() ) { 
+        $r->recordPosition( scalar( @{ $self->records() } ) + 1 );
+    }
+    push( @{ $self->{records} }, $r );
+}
+
 =head2 records()
 
 Gets or sets all the records associated with the object. Be careful
 with this one :) You must pass in an array ref, and expect an 
 array ref back.
 
-=cut
+=cut 
 
 =head2 resultSetId()
 
@@ -204,18 +115,57 @@ array ref back.
 
 =cut
 
+SRU::Response::SearchRetrieve->mk_accessors( qw(
+    version 
+    records                     
+    resultSetId                 
+    resultSetIdleTime           
+    nextRecordPosition          
+    diagnostics                 
+    extraResponseData           
+    echoedSearchRetrieveRequest 
+    stylesheet
+) );
+
 =head2 asXML()
 
-    asXML(encoding=>"ISO-8859-1")
-
-Returns the object serialized as XML. UTF-8 and UTF-16 are default encodings if you don't pass the encoding parameter. You can define different encoding in order to parse you XML document correctly.
+Returns the object serialized as XML. 
 
 =cut
-=head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by Ed Summers.
+sub asXML {
+    my $self = shift;
 
-This is free software; you can redistribute it and/or modify it under
-the same terms as the Perl 5 programming language system itself.
+    my $numberOfRecords = $self->numberOfRecords();
+    my $stylesheet = $self->stylesheetXML();
+    my $diagnostics = $self->diagnosticsXML();
 
-=cut
+    my $xml = 
+<<SEARCHRETRIEVE_XML;
+<?xml version='1.0' ?>
+$stylesheet
+<searchRetrieveResponse>
+<version>1.1</version>
+<numberOfRecords>$numberOfRecords</numberOfRecords>
+<records>
+SEARCHRETRIEVE_XML
+
+    ## now add each record
+    foreach my $r ( @{ $self->{records} } ) {
+        $xml .= $r->asXML()."\n";
+    }
+
+    $xml .=
+<<SEARCHRETRIEVE_XML;
+</records>
+$diagnostics
+<echoedSearchRetrieveRequest>
+<query>chemistry</query>
+</echoedSearchRetrieveRequest>
+</searchRetrieveResponse>
+SEARCHRETRIEVE_XML
+
+    return $xml;
+}
+
+1;

@@ -1,56 +1,14 @@
 package SRU::Request::Scan;
-{
-  $SRU::Request::Scan::VERSION = '1.01';
-}
-#ABSTRACT: A class for representing SRU scan requests
 
 use strict;
 use warnings;
 use base qw( Class::Accessor SRU::Request );
+use UNIVERSAL qw( isa );
 use SRU::Utils qw( error );
-
-
-sub new {
-    my ($class,%args) = @_;
-    return $class->SUPER::new( \%args );
-}
-
-
-my @validParams = qw( 
-    version
-    scanClause
-    responsePosition
-    maximumTerms
-    stylesheet
-    extraRequestData
-);
-
-
-sub validParams { return @validParams; }
-
-SRU::Request::Scan->mk_accessors( @validParams );
-
-
-sub cql {
-    my $self = shift;
-    my $clause = $self->scanClause();
-    return '' unless $clause;
-    my $node;
-    my $parser = CQL::Parser->new();
-    eval { $node = $parser->parse( $clause ) };
-    return $node;
-}
-
-
-1;
-
-__END__
-
-=pod
 
 =head1 NAME
 
-SRU::Request::Scan - A class for representing SRU scan requests
+SRU::Request::Scan - class for representing scan SRU requests
 
 =head1 SYNOPSIS
 
@@ -65,15 +23,24 @@ SRU::Request::Scan is a class for representing SRU 'scan' requests.
 
 =head2 new()
 
-The constructor, which you can pass the parameters: version, scanClause
+The constructor, which you can pass the parameters: base, version, scanClause
 responsePosition, maximumTerms, stylesheet, extraRequestData.
 
     my $request = SRU::Request::Explain->new( 
+        base        => 'http://www.example.com/sru',
         version     => '1.1',
         scanClause  => 'horses',
     );
 
 =cut
+
+sub new {
+    my ($class,%args) = @_;
+    return error( "missing base parameter" ) if ! exists( $args{base} );
+    return $class->SUPER::new( \%args );
+}
+
+=head2 base()
 
 =head2 version()
 
@@ -89,20 +56,24 @@ responsePosition, maximumTerms, stylesheet, extraRequestData.
 
 =cut
 
-=head2 validParams()
+SRU::Request::Scan->mk_accessors( qw( 
+    base
+    version
+    scanClause
+    responsePosition
+    maximumTerms
+    stylesheet
+    extraRequestData
+) );
+
+=head2 asXML()
 
 =cut
 
-=head2 cql()
+sub asXML {
+    my $self = shift;
+    ## XXX: need to implement this
+    return '';
+}
 
-Fetch the root node of the CQL parse tree for the scan clause. 
-
-=cut
-=head1 COPYRIGHT AND LICENSE
-
-This software is copyright (c) 2013 by Ed Summers.
-
-This is free software; you can redistribute it and/or modify it under
-the same terms as the Perl 5 programming language system itself.
-
-=cut
+1;

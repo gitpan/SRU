@@ -1,8 +1,4 @@
 package SRU::Response::Term;
-{
-  $SRU::Response::Term::VERSION = '1.01';
-}
-#ABSTRACT: A class for representing terms in a Scan response
 
 use strict;
 use warnings;
@@ -10,45 +6,9 @@ use SRU::Utils qw( error );
 use SRU::Utils::XML qw( element elementNoEscape );
 use base qw( Class::Accessor );
 
-
-sub new {
-    my ($class, %args) = @_;
-    return error( "must supply value parameter in call to new()" )
-        if ! exists $args{value};
-    return $class->SUPER::new( \%args );
-}
-
-
-SRU::Response::Term->mk_accessors( qw(
-    value
-    numberOfRecords
-    displayTerm
-    whereInList
-    extraTermData
-) );
-
-
-sub asXML {
-    my $self = shift;
-    return 
-        elementNoEscape( 'term', 
-            element( 'value', $self->value() ) . 
-            element( 'numberOfRecords', $self->numberOfRecords() ) . 
-            element( 'displayTerm', $self->displayTerm() ) . 
-            element( 'whereInList', $self->whereInList() ) . 
-            elementNoEscape( 'extraTermData', $self->extraTermData() )
-        );
-}
-
-1;
-
-__END__
-
-=pod
-
 =head1 NAME
 
-SRU::Response::Term - A class for representing terms in a Scan response
+SRU::Response::Term - a class for representing terms in a Scan response
 
 =head1 SYNOPSIS
 
@@ -70,7 +30,14 @@ In addition you can pass the numberOfRecords, displayTerm, whereInList,
 and extraTermData parameters, or set them separately with their
 accessors.
 
-=cut
+=cut 
+
+sub new {
+    my ($class, %args) = @_;
+    return error( "must supply value parameter in call to new()" )
+        if ! exists $args{value};
+    return $class->SUPER::new( \%args );
+}
 
 =head2 value()
 
@@ -101,14 +68,28 @@ extensions section.
 
 =cut
 
+SRU::Response::Term->mk_accessors( qw(
+    value
+    numberOfRecords
+    displayTerm
+    whereInList
+    extraTermData
+) );
+
 =head2 asXML()
 
-=cut
-=head1 COPYRIGHT AND LICENSE
+=cut 
 
-This software is copyright (c) 2013 by Ed Summers.
+sub asXML {
+    my $self = shift;
+    return 
+        elementNoEscape( 'term', 
+            element( 'value', $self->value() ) . 
+            element( 'numberOfRecords', $self->numberOfRecords() ) . 
+            element( 'displayTerm', $self->displayTerm() ) . 
+            element( 'whereInList', $self->whereInList() ) . 
+            elementNoEscape( 'extraTermData', $self->extraTermData() )
+        );
+}
 
-This is free software; you can redistribute it and/or modify it under
-the same terms as the Perl 5 programming language system itself.
-
-=cut
+1;
