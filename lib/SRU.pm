@@ -3,7 +3,7 @@ package SRU;
 use strict;
 use warnings;
 
-our $VERSION = '0.7';
+our $VERSION = '0.8';
 
 =head1 NAME 
 
@@ -95,7 +95,7 @@ in this distribution see the POD in the individual packages:
 
 =item * L<SRU::Response::SearchRetrieve>
 
-=item * L<SRU::Application>
+=item * L<SRU::Server>
 
 =back
 
@@ -107,6 +107,12 @@ http://www.ockham.org.
 =head1 TODO
 
 =over 4 
+
+=item * create a client (SRU::Client)
+
+=item * allow searchRetrieve responses to be retrieved as RSS
+
+=item * make sure SRU::Server can function like real-world SRU interfaces
 
 =item * handle CQL parsing errors
 

@@ -42,11 +42,11 @@ SEARCH_RETRIEVE: {
 }
 
 ############################
-## a harmless SRU::App subclass 
+## a harmless SRU::Server subclass 
 
 package MyApp;
 
-use base qw( SRU::Application );
+use base qw( SRU::Server );
 
 sub explain {
     my $self = shift;

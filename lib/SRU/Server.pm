@@ -1,14 +1,14 @@
-package SRU::Application;
+package SRU::Server;
 
 =head1 NAME 
 
-SRU::Application - respond to SRU requests via CGI::Application
+SRU::Server - respond to SRU requests via CGI::Application
 
 =head1 SYNOPSIS
 
     package MySRU;
 
-    use base qw( SRU::Application );
+    use base qw( SRU::Server );
 
     sub explain {
         my $self = shift;
@@ -60,8 +60,6 @@ This method returns a scan response.
 This method returns a searchRetrieve response.
 
 =cut
-
-our $VERSION = '0.01';
 
 use base qw( CGI::Application Class::Accessor );
 

@@ -1,3 +1,6 @@
+v0.8 Fri Dec 17 11:32:40 AST 2004
+- renamed SRU::Application to SRU::Server
+
 v0.7 Thu Dec  9 00:43:08 CST 2004
 - new tests for exception handling
 - newFromCGI() now forces ampersands in query string
@@ -5,7 +8,7 @@ v0.7 Thu Dec  9 00:43:08 CST 2004
 - fixed nesting problem with <record> in explain response (thanks Eric Morgan)
 
 v0.6 Mon Dec  6 13:58:46 CST 2004
-- needed to add CGI::Application to the MANIFEST
+- needed to add SRU::Application to the MANIFEST
 - require CQL::Parser v0.3
 
 v0.5 Sat Dec  4 22:20:40 CST 2004

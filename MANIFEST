@@ -1,6 +1,6 @@
 Changes
 lib/SRU.pm
-lib/SRU/Application.pm
+lib/SRU/Server.pm
 lib/SRU/Request.pm
 lib/SRU/Request/Explain.pm
 lib/SRU/Request/Scan.pm
