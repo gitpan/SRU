@@ -70,7 +70,9 @@ Returns the number of results associated with the object.
 =cut 
 
 sub numberOfRecords {
-    return scalar( @{ shift->{records} } );
+    my ($self,$num) = @_;
+    if ( $num ) { $self->{numberOfRecords} = $num; }
+    return $self->{numberOfRecords};
 }
 
 =head2 addRecord()
@@ -89,8 +91,9 @@ sub addRecord {
     return if ! $r->isa( 'SRU::Response::Record' );
     ## set recordPosition if necessary
     if ( ! $r->recordPosition() ) { 
-        $r->recordPosition( scalar( @{ $self->records() } ) + 1 );
+        $r->recordPosition( $self->numberOfRecords() + 1 );
     }
+    $self->{numberOfRecords}++;
     push( @{ $self->{records} }, $r );
 }
 

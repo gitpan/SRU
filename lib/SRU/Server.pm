@@ -101,6 +101,15 @@ sub cgiapp_prerun {
         $cql = $self->request->query;
     }
 
+    if( defined $cql ) {
+        eval {
+            $self->cql( CQL::Parser->new->parse( $cql ) );
+        };
+        if ( $@ ) {
+            $self->prerun_mode( $modes[ ERROR ] );
+            $self->response->addDiagnostic( SRU::Response::Diagnostic->newFromCode( 10 ) );
+        }
+    }
 }
 
 sub cgiapp_postrun {

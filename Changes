@@ -1,4 +1,8 @@
-vX.XX 
+v0.87 Tue Feb  1 12:17:54 CST 2005
+- added ability to set numberOfRecords() in searchRetrieve request: 
+  thanks Bernd Diekmann
+
+v0.86 Tue Jan 11 09:16:41 CST 2005
 - removed diagnostic handling for explain responses that lack version and
   operator
 - fixed explain response to use <record> element properly

@@ -57,3 +57,41 @@ OK: {
     like( $xml, qr/<xQuery>/, 'found xQuery tag' );
 }
 
+SET_NUMBER_OF_RECORDS: {
+
+    my $url = "http://myserver.com/myurl/?operation=searchRetrieve&version=1.1&query=dc.identifier+%3d%220-8212-1623-6%22&recordSchema=dc&recordPacking=XML&stylesheet=http://myserver.com/myStyle";
+
+    my $request = SRU::Request->newFromURI( $url );
+    isa_ok( $request, 'SRU::Request::SearchRetrieve' );
+
+    my $response = SRU::Response->newFromRequest( $request );
+    isa_ok( $response, 'SRU::Response::SearchRetrieve' );
+    is( $response->type(), 'searchRetrieve', 'type()' );
+
+    is( $response->numberOfRecords(), 0, 'numberOfRecords is 0' );
+
+    ## add record #1
+    $response->addRecord( 
+        SRU::Response::Record->new(
+            recordSchema => 'info:srw/schema/1/dc-v1.1',
+            recordData => '<title>Huckleberry Finn</title>'
+        )
+    );
+    is( $response->numberOfRecords(), 1, 'numberOfRecords is 1' );
+
+    ## add record #2
+    $response->addRecord( 
+        SRU::Response::Record->new(
+            recordSchema => 'info:srw/schema/1/dc-v1.1&',
+            recordData => '<title>Huckle &amp; berry &amp; Finn</title>'
+        )
+    );
+    is( $response->numberOfRecords(), 2, 'numberOfRecords is 2' );
+
+    ## explicitly set number of records
+    $response->numberOfRecords( 500 );
+    is( $response->numberOfRecords(), 500, 'explicit set of numberOfRecords' );
+
+}
+
+
