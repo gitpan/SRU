@@ -1,3 +1,7 @@
+v0.6 Mon Dec  6 13:58:46 CST 2004
+- needed to add CGI::Application to the MANIFEST
+- require CQL::Parser v0.3
+
 v0.5 Sat Dec  4 22:20:40 CST 2004
 - CGI::Application framework courtesy of Brian Cassidy (who now shares
   ownership of this module).

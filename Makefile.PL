@@ -16,6 +16,6 @@ WriteMakefile(
                             'URI'               => '',
                             'Class::Accessor'   => '',
                             'CGI::Application'  => '',
-                            'CQL::Parser'       => '',
+                            'CQL::Parser'       => '0.3',
 			   },
 );
