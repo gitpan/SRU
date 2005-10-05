@@ -31,4 +31,4 @@ t/response_explain.t
 t/response_scan.t
 t/response_searchRetrieve.t
 t/term.t
-META.yml                                 Module meta-data (added by MakeMaker)
+META.yml                                Module meta-data (added by MakeMaker)
