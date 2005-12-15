@@ -9,7 +9,7 @@ use SRU::Response;
 use SRU::Response::Diagnostic;
 use CQL::Parser;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 __PACKAGE__->mk_classdata( 'sru_request' );
 __PACKAGE__->mk_classdata( 'sru_response' );
@@ -46,7 +46,7 @@ Catalyst::Plugin::SRU - Dispatch SRU methods with Catalyst
 	# $c->sru_response ISA SRU::Response::Scan
     }
 	
-    sub searchretrieve : Private {
+    sub searchRetrieve : Private {
         my ( $self, $c ) = @_;
 
 	# $c->cql ISA CQL::Parser root node
@@ -56,8 +56,8 @@ Catalyst::Plugin::SRU - Dispatch SRU methods with Catalyst
 
 =head1 DESCRIPTION
 
-This plugin allows your controller class to dispatch XMLRPC methods
-from its own class.
+This plugin allows your controller class to dispatch SRU actions
+(C<explain>, C<scan>, and C<searchRetrieve>) from its own class.
 
 =head1 METHODS
 
@@ -70,19 +70,17 @@ the type of SRU request it finds. It will then pass the request over to your cus
 
 sub parse_sru {
 	my $c   = shift;
-	my $req = $c->req;
-	my $url = $req->uri . '?' . join( '&', map { $_ . '=' . $req->param( $_ ) } $req->param );
+	my $sru = SRU::Request->newFromURI( $c->req->uri );
 
-	my $sru = SRU::Request->newFromURI( $url );
 	$c->sru_request( $sru );
-	$c->sru_response( SRU::Response->newFromRequest( $c->sru_request ) );
+	$c->sru_response( SRU::Response->newFromRequest( $sru ) );
 
 	my $cql;
-	my $mode = lc( ( split( '::', ref $sru ) )[ -1 ] );
+	my $mode = $sru->type;
 	if ( $mode eq 'scan' ) {
 		$cql = $sru->scanClause;
 	}
-	elsif ( $mode eq 'searchretrieve' ) {
+	elsif ( $mode eq 'searchRetrieve' ) {
 		$cql = $sru->query;
 	}
 
