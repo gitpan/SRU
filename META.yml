@@ -1,16 +1,19 @@
-# http://module-build.sourceforge.net/META-spec.html
-#XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
-name:         SRU
-version:      0.95
-version_from: lib/SRU.pm
-installdirs:  site
-requires:
+--- #YAML:1.0
+name:                SRU
+version:             0.96
+abstract:            Search and Retrieve URL Service
+license:             perl
+generated_by:        ExtUtils::MakeMaker version 6.32
+distribution_type:   module
+requires:     
     Class::Accessor:               
     CQL::Parser:                   0.3
     Test::Exception:               
     URI:                           
     XML::LibXML:                   
     XML::Simple:                   
-
-distribution_type: module
-generated_by: ExtUtils::MakeMaker version 6.30_01
+meta-spec:
+    url:     http://module-build.sourceforge.net/META-spec-v1.2.html
+    version: 1.2
+author:
+    - Ed Summers <ehs@pobox.com>
