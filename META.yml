@@ -1,19 +1,25 @@
---- #YAML:1.0
-name:                SRU
-version:             0.96
-abstract:            Search and Retrieve URL Service
-license:             perl
-generated_by:        ExtUtils::MakeMaker version 6.32
-distribution_type:   module
-requires:     
-    Class::Accessor:               
-    CQL::Parser:                   0.3
-    Test::Exception:               
-    URI:                           
-    XML::LibXML:                   
-    XML::Simple:                   
-meta-spec:
-    url:     http://module-build.sourceforge.net/META-spec-v1.2.html
-    version: 1.2
-author:
-    - Ed Summers <ehs@pobox.com>
+--- 
+abstract: Search and Retrieval by URL
+author: 
+  - Ed Summers <ehs@pobox.com>
+build_requires: 
+  Test::Exception: 0
+  Test::More: 0
+distribution_type: module
+generated_by: Module::Install version 0.68
+license: perl
+meta-spec: 
+  url: http://module-build.sourceforge.net/META-spec-v1.3.html
+  version: 1.3
+name: SRU
+no_index: 
+  directory: 
+    - inc
+    - t
+requires: 
+  CQL::Parser: 0.3
+  Class::Accessor: 0
+  URI: 0
+  XML::LibXML: 0
+  XML::Simple: 0
+version: 0.97
