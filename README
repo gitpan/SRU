@@ -68,15 +68,23 @@ DESCRIPTION
     working with the various request and response objects in this
     distribution see the POD in the individual packages:
 
-    * SRU::Request
-    * SRU::Request::Explain
-    * SRU::Request::Scan
-    * SRU::Request::SearchRetrieve
-    * SRU::Response
-    * SRU::Response::Explain
-    * SRU::Response::Scan
-    * SRU::Response::SearchRetrieve
-    * SRU::Server
+    *   SRU::Request
+
+    *   SRU::Request::Explain
+
+    *   SRU::Request::Scan
+
+    *   SRU::Request::SearchRetrieve
+
+    *   SRU::Response
+
+    *   SRU::Response::Explain
+
+    *   SRU::Response::Scan
+
+    *   SRU::Response::SearchRetrieve
+
+    *   SRU::Server
 
     Questions and comments are more than welcome. This software was
     developed as part of a National Science Foundation grant for building
@@ -84,17 +92,21 @@ DESCRIPTION
     be found at http://www.ockham.org.
 
 TODO
-    * create a client (SRU::Client)
-    * allow searchRetrieve responses to be retrieved as RSS
-    * make sure SRU::Server can function like real-world SRU interfaces
-    * handle CQL parsing errors
-    * better argument checking in response constructors
+    *   create a client (SRU::Client)
+
+    *   allow searchRetrieve responses to be retrieved as RSS
+
+    *   make sure SRU::Server can function like real-world SRU interfaces
+
+    *   handle CQL parsing errors
+
+    *   better argument checking in response constructors
 
 AUTHORS
     Ed Summers <ehs@pobox.com>
 
 COPYRIGHT AND LICENSE
-    Copyright 2008 by Ed Summers
+    Copyright 2004-2009 by Ed Summers
 
     This library is free software; you can redistribute it and/or modify it
     under the same terms as Perl itself.
