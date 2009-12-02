@@ -29,4 +29,4 @@ requires:
 resources:
   license: http://dev.perl.org/licenses/
   repository: http://github.com/edsu/sru-perl/tree/master
-version: 0.98
+version: 0.99
