@@ -3,13 +3,14 @@ abstract: 'Search and Retrieval by URL'
 author:
   - 'Ed Summers <ehs@pobox.com>'
 build_requires:
-  ExtUtils::MakeMaker: 6.42
+  ExtUtils::MakeMaker: 6.59
   Test::Exception: 0
   Test::More: 0
 configure_requires:
-  ExtUtils::MakeMaker: 6.42
+  ExtUtils::MakeMaker: 6.59
 distribution_type: module
-generated_by: 'Module::Install version 0.91'
+dynamic_config: 1
+generated_by: 'Module::Install version 1.06'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -20,7 +21,7 @@ no_index:
     - inc
     - t
 requires:
-  CQL::Parser: 0.3
+  CQL::Parser: 1.12
   Class::Accessor: 0
   URI: 0
   XML::LibXML: 0
@@ -28,5 +29,5 @@ requires:
   perl: 5.8.0
 resources:
   license: http://dev.perl.org/licenses/
-  repository: http://github.com/edsu/sru-perl/tree/master
-version: 0.99
+  repository: http://github.com/bricas/sru-perl
+version: 1.00
