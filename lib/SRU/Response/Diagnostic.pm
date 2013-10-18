@@ -1,4 +1,8 @@
 package SRU::Response::Diagnostic;
+{
+  $SRU::Response::Diagnostic::VERSION = '1.01';
+}
+#ABSTRACT: An SRU diagnostic message
 
 use strict;
 use warnings;
@@ -98,6 +102,47 @@ our %DIAG = (
 
 );
 
+
+
+sub new {
+    my ($class,%args) = @_;
+    my $self = $class->SUPER::new( \%args );
+    return $self;
+}
+
+
+sub newFromCode {
+    my ($class,$code,$details) = @_;
+    return error( "no such diagnostic code ($code)" )
+        if ! exists $DIAG{$code};
+    my $desc = $DIAG{$code};
+    return $class->new( 
+        uri     => 'info:srw/diagnostic/1/' . $code,
+        message => $desc,
+        details => $details );
+}
+
+SRU::Response::Diagnostic->mk_accessors( qw(
+    uri
+    details
+    message
+) );
+
+
+sub asXML {
+    my $self = shift;
+    my $xml = element( 'uri', $self->uri() );
+    $xml .= element( 'details', $self->details() );
+    $xml .= element( 'message', $self->message() );
+    return elementNoEscape( 'diagnostics', $xml );
+}
+
+1;
+
+__END__
+
+=pod
+
 =head1 NAME
 
 SRU::Response::Diagnostic - An SRU diagnostic message
@@ -125,13 +170,7 @@ to store diagnostic messages.
 Pass in uri, details and message attributes as needed. You'll probably
 find using newFromCode() easier to work with.
 
-=cut 
-
-sub new {
-    my ($class,%args) = @_;
-    my $self = $class->SUPER::new( \%args );
-    return $self;
-}
+=cut
 
 =head2 newFromCode()
 
@@ -140,16 +179,6 @@ complete list of the codes see the SRW/SRU documentation.
 
 =cut
 
-sub newFromCode {
-    my ($class,$code,$details) = @_;
-    return error( "no such diagnostic code ($code)" )
-        if ! exists $DIAG{$code};
-    my $desc = $DIAG{$code};
-    return $class->new( 
-        uri     => 'info:srw/diagnostic/1/' . $code,
-        message => $desc,
-        details => $details );
-}
 =head2 uri()
 
 =head2 details()
@@ -158,22 +187,14 @@ sub newFromCode {
 
 =cut
 
-SRU::Response::Diagnostic->mk_accessors( qw(
-    uri
-    details
-    message
-) );
-
 =head2 asXML()
 
 =cut
+=head1 COPYRIGHT AND LICENSE
 
-sub asXML {
-    my $self = shift;
-    my $xml = element( 'uri', $self->uri() );
-    $xml .= element( 'details', $self->details() );
-    $xml .= element( 'message', $self->message() );
-    return elementNoEscape( 'diagnostics', $xml );
-}
+This software is copyright (c) 2013 by Ed Summers.
 
-1;
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut

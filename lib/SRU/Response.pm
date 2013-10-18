@@ -1,4 +1,8 @@
 package SRU::Response;
+{
+  $SRU::Response::VERSION = '1.01';
+}
+#ABSTRACT: A factory for creating SRU response objects
 
 use strict;
 use warnings;
@@ -7,6 +11,65 @@ use SRU::Response::Scan;
 use SRU::Response::SearchRetrieve;
 use SRU::Utils qw( error );
 use SRU::Utils::XML qw( stylesheet );
+
+
+sub newFromRequest {
+    my ($class,$request) = @_;
+
+    ## make sure we've got a SRU::Request object
+    my $requestType = ref($request);
+    return error( "must pass in valid SRU::Request object" )
+        if ! $requestType or ! $request->isa( 'SRU::Request' );
+
+    ## return the appropriate response object
+    my $response;
+    if ( $requestType eq 'SRU::Request::Explain' ) {
+        $response = SRU::Response::Explain->new( $request );
+    } elsif ( $requestType eq 'SRU::Request::Scan' ) {
+        $response = SRU::Response::Scan->new( $request );
+    } elsif ( $requestType eq 'SRU::Request::SearchRetrieve' ) {
+        $response = SRU::Response::SearchRetrieve->new( $request );
+    }
+    return $response;
+}
+
+
+sub type {
+    my $self  = shift;
+    my $class = ref $self || $self;
+    return lcfirst( ( split( '::', $class ) )[ -1 ] );
+}
+
+
+sub addDiagnostic {
+    my ($self,$d) = @_;
+    push(@{ $self->{diagnostics} }, $d);
+}
+
+
+sub diagnosticsXML {
+    my $self = shift;
+    my $xml = '';
+    foreach my $d ( @{ $self->diagnostics() } ) {
+        $xml .= $d->asXML();
+    }
+    return $xml;
+}
+
+
+sub stylesheetXML {
+    my $self = shift;
+    if ( $self->stylesheet() ) {
+        return stylesheet( $self->stylesheet() );
+    }
+    return '';
+}
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -35,26 +98,6 @@ with an appropriate error stored in $SRU::Error.
 
 =cut
 
-sub newFromRequest {
-    my ($class,$request) = @_;
-
-    ## make sure we've got a SRU::Request object
-    my $requestType = ref($request);
-    return error( "must pass in valid SRU::Request object" )
-        if ! $requestType or ! $request->isa( 'SRU::Request' );
-
-    ## return the appropriate response object
-    my $response;
-    if ( $requestType eq 'SRU::Request::Explain' ) {
-        $response = SRU::Response::Explain->new( $request );
-    } elsif ( $requestType eq 'SRU::Request::Scan' ) {
-        $response = SRU::Response::Scan->new( $request );
-    } elsif ( $requestType eq 'SRU::Request::SearchRetrieve' ) {
-        $response = SRU::Response::SearchRetrieve->new( $request );
-    }
-    return $response;
-}
-
 =head1 INHERITED METHODS
 
 SRU::Resonse also serves as the base class for the three response types, and
@@ -67,44 +110,22 @@ object it is.
 
 =cut
 
-sub type {
-    my $self  = shift;
-    my $class = ref $self || $self;
-    return lcfirst( ( split( '::', $class ) )[ -1 ] );
-}
-
 =head2 addDiagnostic()
 
 =cut
-
-sub addDiagnostic {
-    my ($self,$d) = @_;
-    push(@{ $self->{diagnostics} }, $d);
-}
 
 =head2 diagnosticsXML()
 
 =cut
 
-sub diagnosticsXML {
-    my $self = shift;
-    my $xml = '';
-    foreach my $d ( @{ $self->diagnostics() } ) {
-        $xml .= $d->asXML();
-    }
-    return $xml;
-}
-
 =head2 stylesheetXML()
 
 =cut
+=head1 COPYRIGHT AND LICENSE
 
-sub stylesheetXML {
-    my $self = shift;
-    if ( $self->stylesheet() ) {
-        return stylesheet( $self->stylesheet() );
-    }
-    return '';
-}
+This software is copyright (c) 2013 by Ed Summers.
 
-1;
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut

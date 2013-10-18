@@ -1,9 +1,62 @@
 package Catalyst::Controller::SRU;
+{
+  $Catalyst::Controller::SRU::VERSION = '1.01';
+}
+#ABSTRACT: Dispatch SRU methods with Catalyst
 
 use strict;
 use warnings;
 
-our $VERSION = '1.00';
+
+use base qw( Catalyst::Controller );
+
+use SRU::Request;
+use SRU::Response;
+use SRU::Response::Diagnostic;
+use CQL::Parser 1.12;
+
+sub index : Private {
+    my( $self, $c ) = @_;
+
+    my $sru_request  = SRU::Request->newFromURI( $c->req->uri );
+    my $sru_response = SRU::Response->newFromRequest( $sru_request );
+    my @args         = ( $sru_request, $sru_response );
+
+    my $cql;
+    my $mode = $sru_request->type;
+    if ( $mode eq 'scan' ) {
+        $cql = $sru_request->scanClause;
+    }
+    elsif ( $mode eq 'searchRetrieve' ) {
+        $cql = $sru_request->query;
+    }
+
+    if( defined $cql ) {
+        $cql = CQL::Parser->new->parseSafe( $cql );
+        push @args, $cql;
+        unless ( ref $cql ) {
+            $sru_response->addDiagnostic( SRU::Response::Diagnostic->newFromCode( $cql ) );
+        }
+    }
+
+    if ( my $action = $self->can( $mode ) ) {
+        $action->( $self, $c, @args );
+    }
+    else {
+        $sru_response->addDiagnostic( SRU::Response::Diagnostic->newFromCode( 4 ) );
+        $c->log->debug( qq(Couldn't find sru method "$mode") ) if $c->debug;
+    }
+
+    $c->res->content_type( 'text/xml' );
+    $c->res->body( $sru_response->asXML );
+};
+
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -55,49 +108,6 @@ type of SRU request it finds. It will then pass the data over to your customized
 
 =cut
 
-use base qw( Catalyst::Controller );
-
-use SRU::Request;
-use SRU::Response;
-use SRU::Response::Diagnostic;
-use CQL::Parser 1.12;
-
-sub index : Private {
-    my( $self, $c ) = @_;
-
-    my $sru_request  = SRU::Request->newFromURI( $c->req->uri );
-    my $sru_response = SRU::Response->newFromRequest( $sru_request );
-    my @args         = ( $sru_request, $sru_response );
-
-    my $cql;
-    my $mode = $sru_request->type;
-    if ( $mode eq 'scan' ) {
-        $cql = $sru_request->scanClause;
-    }
-    elsif ( $mode eq 'searchRetrieve' ) {
-        $cql = $sru_request->query;
-    }
-
-    if( defined $cql ) {
-        $cql = CQL::Parser->new->parseSafe( $cql );
-        push @args, $cql;
-        unless ( ref $cql ) {
-            $sru_response->addDiagnostic( SRU::Response::Diagnostic->newFromCode( $cql ) );
-        }
-    }
-
-    if ( my $action = $self->can( $mode ) ) {
-        $action->( $self, $c, @args );
-    }
-    else {
-        $sru_response->addDiagnostic( SRU::Response::Diagnostic->newFromCode( 4 ) );
-        $c->log->debug( qq(Couldn't find sru method "$mode") ) if $c->debug;
-    }
-
-    $c->res->content_type( 'text/xml' );
-    $c->res->body( $sru_response->asXML );
-};
-
 =head1 SEE ALSO
 
 =over 4
@@ -108,17 +118,16 @@ sub index : Private {
 
 =back
 
-=head1 AUTHOR
+=head1 AUTHORS
 
-Brian Cassidy E<lt>bricas@cpan.orgE<gt>
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright 2005-2013 by Brian Cassidy
-
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself. 
+Brian Cassidy <bricas@cpan.org>
 
 =cut
+=head1 COPYRIGHT AND LICENSE
 
-1;
+This software is copyright (c) 2013 by Ed Summers.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut

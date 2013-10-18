@@ -1,4 +1,8 @@
 package SRU::Request;
+{
+  $SRU::Request::VERSION = '1.01';
+}
+#ABSTRACT: Factories for creating SRU request objects. 
 
 use strict;
 use warnings;
@@ -21,47 +25,6 @@ our %PARAMETERS = (
            recordXPath resultSetTTL sortKeys stylesheet extraRequestData)]
 );
 
-=head1 NAME
-
-SRU::Request - Factories for creating SRU request objects. 
-
-=head1 SYNOPSIS
-
-    use SRU::Request;
-    my $request = SRU::Request->newFromURI( $uri );
-
-=head1 DESCRIPTION
-
-SRU::Request allows you to create the appropriate SRU request object
-from a URI object. This allows you to pass in a URI and get back 
-one of SRU::Request::Explain, SRU::Request::Scan or 
-SRU::Request::SearchRetrieve depending on the type of URI that is passed 
-in. See the docs for those classes for more information about what
-they contain.
-
-=head1 METHODS
-
-=head2 new( %query | $uri | $cgi | $env )
-
-Create a new request object which is one of:
-
-=over 4
-
-=item * SRU::Request::Explain
-
-=item * SRU::Request::Scan
-
-=item * SRU::Request::SearchRetrieve
-
-=back
-
-One can pass query parameters as hash, as URL, as L<URI>, as L<CGI> object or
-as L<PSGI> request.
-
-If the request is not formatted properly the call will return undef. 
-The error encountered should be available in $SRU::Error.
-
-=cut
 
 sub new {
     my $class = shift;
@@ -112,23 +75,10 @@ sub new {
 
 }
 
-=head2 newFromURI
-
-=head2 newFromCGI
-
-Deprecated aliases for C<new>.
-
-=cut
 
 *newFromURI = *new;
 *newFromCGI = *new;
 
-=head2 asXML()
-
-Used to generate <echoedExplainRequest>, <echoedSearchRetrieveRequest> and
-<echoedScanRequest> elements in the response.
-
-=cut
 
 sub asXML {
     my $self = shift;
@@ -160,12 +110,6 @@ sub asXML {
     return $xml;
 }
 
-=head2 asURI( [ $base ] )
-
-Creates a L<URI> of this request. The optional C<base> URL, provided as
-string or as L<URI>, is set to C<http://localhost/> by default.
-
-=cut
 
 sub asURI {
     my ($self, $base) = @_;
@@ -185,12 +129,6 @@ sub asURI {
 }
 
 
-=head2 type()
-
-Returns 'searchRetrieve', 'scan' or 'explain' depending on what type of
-object it is.
-
-=cut
 
 sub type {
     my $self  = shift;
@@ -199,3 +137,86 @@ sub type {
 }
 
 1;
+
+__END__
+
+=pod
+
+=head1 NAME
+
+SRU::Request - Factories for creating SRU request objects. 
+
+=head1 SYNOPSIS
+
+    use SRU::Request;
+    my $request = SRU::Request->newFromURI( $uri );
+
+=head1 DESCRIPTION
+
+SRU::Request allows you to create the appropriate SRU request object
+from a URI object. This allows you to pass in a URI and get back 
+one of SRU::Request::Explain, SRU::Request::Scan or 
+SRU::Request::SearchRetrieve depending on the type of URI that is passed 
+in. See the docs for those classes for more information about what
+they contain.
+
+=head1 METHODS
+
+=head2 new( %query | $uri | $cgi | $env )
+
+Create a new request object which is one of:
+
+=over 4
+
+=item * SRU::Request::Explain
+
+=item * SRU::Request::Scan
+
+=item * SRU::Request::SearchRetrieve
+
+=back
+
+One can pass query parameters as hash, as URL, as L<URI>, as L<CGI> object or
+as L<PSGI> request.
+
+If the request is not formatted properly the call will return undef. 
+The error encountered should be available in $SRU::Error.
+
+=cut
+
+=head2 newFromURI
+
+=head2 newFromCGI
+
+Deprecated aliases for C<new>.
+
+=cut
+
+=head2 asXML()
+
+Used to generate <echoedExplainRequest>, <echoedSearchRetrieveRequest> and
+<echoedScanRequest> elements in the response.
+
+=cut
+
+=head2 asURI( [ $base ] )
+
+Creates a L<URI> of this request. The optional C<base> URL, provided as
+string or as L<URI>, is set to C<http://localhost/> by default.
+
+=cut
+
+=head2 type()
+
+Returns 'searchRetrieve', 'scan' or 'explain' depending on what type of
+object it is.
+
+=cut
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2013 by Ed Summers.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut

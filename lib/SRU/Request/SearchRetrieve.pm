@@ -1,10 +1,57 @@
 package SRU::Request::SearchRetrieve;
+{
+  $SRU::Request::SearchRetrieve::VERSION = '1.01';
+}
+#ABSTRACT: A class for representing SRU searchRetrieve requests
 
 use strict;
 use warnings;
 use base qw( Class::Accessor SRU::Request );
 use SRU::Utils qw( error );
 use CQL::Parser;
+
+
+sub new {
+    my ($class,%args) = @_;
+    return SRU::Request::SearchRetrieve->SUPER::new( \%args );
+}
+
+
+my @validParams = qw(
+    version
+    query
+    startRecord
+    maximumRecords
+    recordPacking
+    recordSchema
+    recordXPath
+    resultSetTTL
+    sortKeys
+    stylesheet
+    extraRequestData
+);
+
+
+sub validParams { return @validParams };
+
+SRU::Request::SearchRetrieve->mk_accessors( @validParams );
+
+
+sub cql {
+    my $self = shift;
+    my $query = $self->query();
+    return '' unless $query;
+    my $node;
+    my $parser = CQL::Parser->new();
+    eval { $node = $parser->parse( $query ) };
+    return $node;
+}
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -30,11 +77,6 @@ The version and query parameters are mandatory.
 
 =cut
 
-sub new {
-    my ($class,%args) = @_;
-    return SRU::Request::SearchRetrieve->SUPER::new( \%args );
-}
-
 =head2 version()
 
 =head2 query()
@@ -57,44 +99,22 @@ sub new {
 
 =head2 extraRequestData()
 
-=cut 
-
-my @validParams = qw(
-    version
-    query
-    startRecord
-    maximumRecords
-    recordPacking
-    recordSchema
-    recordXPath
-    resultSetTTL
-    sortKeys
-    stylesheet
-    extraRequestData
-);
+=cut
 
 =head2 validParams()
 
 =cut
 
-sub validParams { return @validParams };
-
-SRU::Request::SearchRetrieve->mk_accessors( @validParams );
-
 =head2 cql()
 
 Fetch the root node of the CQL parse tree for the query.
 
-=cut 
+=cut
+=head1 COPYRIGHT AND LICENSE
 
-sub cql {
-    my $self = shift;
-    my $query = $self->query();
-    return '' unless $query;
-    my $node;
-    my $parser = CQL::Parser->new();
-    eval { $node = $parser->parse( $query ) };
-    return $node;
-}
+This software is copyright (c) 2013 by Ed Summers.
 
-1;
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut

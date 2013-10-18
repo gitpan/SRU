@@ -1,4 +1,8 @@
 package SRU::Response::Record;
+{
+  $SRU::Response::Record::VERSION = '1.01';
+}
+#ABSTRACT: A class for representing a result record in a searchRetrieve response.
 
 use strict;
 use warnings;
@@ -8,10 +12,52 @@ use Carp qw( croak );
 
 use base qw( Class::Accessor );
 
+
+sub new {
+    my ($class,%args) = @_;
+
+    ## make sure required parameters are sent
+    croak( "must supply recordSchema in call to new()" ) 
+        if ! exists( $args{recordSchema} );
+    croak( "must supply recordData in call to new()" )
+        if ! exists( $args{recordData} );
+
+    ## set some defaults
+    $args{recordPacking} = 'xml' if ! exists $args{recordPacking};
+
+    return $class->SUPER::new( \%args );
+}
+
+SRU::Response::Record->mk_accessors( qw(
+    recordSchema
+    recordPacking
+    recordData
+    recordPosition
+    extraRecordData
+) );
+
+
+sub asXML {
+    my $self = shift;
+    return 
+        elementNoEscape( 'record', 
+            element( 'recordSchema', $self->recordSchema() ) .
+            element( 'recordPacking', $self->recordPacking() ) . 
+            elementNoEscape( 'recordData', $self->recordData() ) .
+            element( 'recordPosition', $self->recordPosition() ) .
+            element( 'extraRecordData', $self->extraRecordData() ) 
+        );
+}
+
+1;
+
+__END__
+
+=pod
+
 =head1 NAME
 
-SRU::Response::Record - A class for representing a result record in a
-searchRetrieve response.
+SRU::Response::Record - A class for representing a result record in a searchRetrieve response.
 
 =head1 SYNOPSIS
 
@@ -68,43 +114,14 @@ more information.
 
 =cut
 
-sub new {
-    my ($class,%args) = @_;
-
-    ## make sure required parameters are sent
-    croak( "must supply recordSchema in call to new()" ) 
-        if ! exists( $args{recordSchema} );
-    croak( "must supply recordData in call to new()" )
-        if ! exists( $args{recordData} );
-
-    ## set some defaults
-    $args{recordPacking} = 'xml' if ! exists $args{recordPacking};
-
-    return $class->SUPER::new( \%args );
-}
-
-SRU::Response::Record->mk_accessors( qw(
-    recordSchema
-    recordPacking
-    recordData
-    recordPosition
-    extraRecordData
-) );
-
 =head2 asXML()
 
 =cut
+=head1 COPYRIGHT AND LICENSE
 
-sub asXML {
-    my $self = shift;
-    return 
-        elementNoEscape( 'record', 
-            element( 'recordSchema', $self->recordSchema() ) .
-            element( 'recordPacking', $self->recordPacking() ) . 
-            elementNoEscape( 'recordData', $self->recordData() ) .
-            element( 'recordPosition', $self->recordPosition() ) .
-            element( 'extraRecordData', $self->extraRecordData() ) 
-        );
-}
+This software is copyright (c) 2013 by Ed Summers.
 
-1;
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut

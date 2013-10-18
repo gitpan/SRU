@@ -1,32 +1,14 @@
 package SRU::Response::Scan;
+{
+  $SRU::Response::Scan::VERSION = '1.01';
+}
+#ABSTRACT: A class for representing SRU scan responses
 
 use strict;
 use warnings;
 use base qw( Class::Accessor SRU::Response );
 use SRU::Utils::XML qw( element elementNoEscape );
 
-=head1 NAME
-
-SRU::Response::Scan - A class for representing SRU scan responses
-
-=head1 SYNOPSIS
-
-SRU::Response::Scan is a class for representing SRU scan response
-A scan request allows SRU clients to browse the indexes of an SRU
-server, much like you would scan the back of a book index to look
-up particular terms in the body of the book. The scan response
-bundles up the terms that were looked up.
-
-=head1 DESCRIPTION
-
-=head1 METHODS
-
-=head2 new()
-
-The constructor which you must pass a valid SRU::Request::Scan
-object. 
-
-=cut
 
 sub new {
     my ($class,$request) = @_;
@@ -48,16 +30,6 @@ sub new {
     return $self;
 }
 
-=head2 version()
-
-=head2 addTerm()
-
-Allows you to add terms to the response object. Terms that are passed in
-must be valid SRU::Response::Term objects.
-
-    $response->addTerm( SRU::Response::Term->new( value => 'Foo Fighter' ) );
-
-=cut 
 
 sub addTerm {
     my ($self,$term) = @_;
@@ -66,19 +38,6 @@ sub addTerm {
     push( @{ $self->{terms} }, $term );
 }
 
-=head2 terms()
-
-Get/set the terms associated with the response. Be carefult you must pass
-in an array ref of SRU::Response::Term objects, or expect an array ref
-back when getting the values. If you don't bad things will happen.
-
-=head2 diagnostics()
-
-=head2 extraResponseData()
-
-=head2 echoedScanRequest()
-
-=cut
 
 SRU::Response::Scan->mk_accessors( qw(
     version
@@ -89,9 +48,6 @@ SRU::Response::Scan->mk_accessors( qw(
     stylesheet
 ) );
 
-=head2 asXML()
-
-=cut
 
 sub asXML {
     my $self = shift;
@@ -119,3 +75,67 @@ sub asXML {
 }
 
 1;
+
+__END__
+
+=pod
+
+=head1 NAME
+
+SRU::Response::Scan - A class for representing SRU scan responses
+
+=head1 SYNOPSIS
+
+SRU::Response::Scan is a class for representing SRU scan response
+A scan request allows SRU clients to browse the indexes of an SRU
+server, much like you would scan the back of a book index to look
+up particular terms in the body of the book. The scan response
+bundles up the terms that were looked up.
+
+=head1 DESCRIPTION
+
+=head1 METHODS
+
+=head2 new()
+
+The constructor which you must pass a valid SRU::Request::Scan
+object. 
+
+=cut
+
+=head2 version()
+
+=head2 addTerm()
+
+Allows you to add terms to the response object. Terms that are passed in
+must be valid SRU::Response::Term objects.
+
+    $response->addTerm( SRU::Response::Term->new( value => 'Foo Fighter' ) );
+
+=cut
+
+=head2 terms()
+
+Get/set the terms associated with the response. Be carefult you must pass
+in an array ref of SRU::Response::Term objects, or expect an array ref
+back when getting the values. If you don't bad things will happen.
+
+=head2 diagnostics()
+
+=head2 extraResponseData()
+
+=head2 echoedScanRequest()
+
+=cut
+
+=head2 asXML()
+
+=cut
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2013 by Ed Summers.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut

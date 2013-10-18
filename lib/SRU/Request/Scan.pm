@@ -1,9 +1,52 @@
 package SRU::Request::Scan;
+{
+  $SRU::Request::Scan::VERSION = '1.01';
+}
+#ABSTRACT: A class for representing SRU scan requests
 
 use strict;
 use warnings;
 use base qw( Class::Accessor SRU::Request );
 use SRU::Utils qw( error );
+
+
+sub new {
+    my ($class,%args) = @_;
+    return $class->SUPER::new( \%args );
+}
+
+
+my @validParams = qw( 
+    version
+    scanClause
+    responsePosition
+    maximumTerms
+    stylesheet
+    extraRequestData
+);
+
+
+sub validParams { return @validParams; }
+
+SRU::Request::Scan->mk_accessors( @validParams );
+
+
+sub cql {
+    my $self = shift;
+    my $clause = $self->scanClause();
+    return '' unless $clause;
+    my $node;
+    my $parser = CQL::Parser->new();
+    eval { $node = $parser->parse( $clause ) };
+    return $node;
+}
+
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -32,11 +75,6 @@ responsePosition, maximumTerms, stylesheet, extraRequestData.
 
 =cut
 
-sub new {
-    my ($class,%args) = @_;
-    return $class->SUPER::new( \%args );
-}
-
 =head2 version()
 
 =head2 scanClause()
@@ -51,38 +89,20 @@ sub new {
 
 =cut
 
-my @validParams = qw( 
-    version
-    scanClause
-    responsePosition
-    maximumTerms
-    stylesheet
-    extraRequestData
-);
-
 =head2 validParams()
 
 =cut
-
-sub validParams { return @validParams; }
-
-SRU::Request::Scan->mk_accessors( @validParams );
 
 =head2 cql()
 
 Fetch the root node of the CQL parse tree for the scan clause. 
 
-=cut 
+=cut
+=head1 COPYRIGHT AND LICENSE
 
-sub cql {
-    my $self = shift;
-    my $clause = $self->scanClause();
-    return '' unless $clause;
-    my $node;
-    my $parser = CQL::Parser->new();
-    eval { $node = $parser->parse( $clause ) };
-    return $node;
-}
+This software is copyright (c) 2013 by Ed Summers.
 
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
-1;
+=cut

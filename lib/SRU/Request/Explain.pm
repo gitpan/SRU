@@ -1,9 +1,39 @@
 package SRU::Request::Explain;
+{
+  $SRU::Request::Explain::VERSION = '1.01';
+}
+#ABSTRACT: A class for representing SRU explain requests
 
 use strict;
 use warnings;
 use base qw( Class::Accessor SRU::Request );
 use SRU::Utils qw( error );
+
+
+sub new {
+    my ($class,%args) = @_;
+    return SRU::Request::Explain->SUPER::new( \%args );
+}
+
+
+my @validParams = qw( 
+    version 
+    recordPacking 
+    stylesheet 
+    extraRequestData 
+);
+
+
+# no pod since this is used in SRU::Request
+sub validParams { return @validParams };
+
+SRU::Request::Explain->mk_accessors( @validParams, 'missingOperator' ); 
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -36,11 +66,6 @@ to create requests, instead of calling new() yourself.
 
 =cut
 
-sub new {
-    my ($class,%args) = @_;
-    return SRU::Request::Explain->SUPER::new( \%args );
-}
-
 =head2 version()
 
 =head2 recordPacking()
@@ -51,20 +76,14 @@ sub new {
 
 =cut
 
-my @validParams = qw( 
-    version 
-    recordPacking 
-    stylesheet 
-    extraRequestData 
-);
-
 =head2 validParams()
 
 =cut
+=head1 COPYRIGHT AND LICENSE
 
-# no pod since this is used in SRU::Request
-sub validParams { return @validParams };
+This software is copyright (c) 2013 by Ed Summers.
 
-SRU::Request::Explain->mk_accessors( @validParams, 'missingOperator' ); 
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
-1;
+=cut

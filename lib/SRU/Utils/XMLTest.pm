@@ -1,4 +1,8 @@
 package SRU::Utils::XMLTest;
+{
+  $SRU::Utils::XMLTest::VERSION = '1.01';
+}
+#ABSTRACT: XML testing utility functions
 
 use strict;
 use warnings;
@@ -6,6 +10,22 @@ use XML::LibXML;
 use base qw( Exporter );
 
 our @EXPORT = qw( wellFormedXML );
+
+
+sub wellFormedXML {
+    my $xml_string = shift;
+    eval {  
+        my $parser = XML::LibXML->new;
+        $parser->parse_string($xml_string);
+    };
+    return $@ ? 0 : 1;
+}
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -27,14 +47,11 @@ This is a set of utility functions for use with testing XML data.
 Checks if C<$xml> is welformed.
 
 =cut
+=head1 COPYRIGHT AND LICENSE
 
-sub wellFormedXML {
-    my $xml_string = shift;
-    eval {  
-        my $parser = XML::LibXML->new;
-        $parser->parse_string($xml_string);
-    };
-    return $@ ? 0 : 1;
-}
+This software is copyright (c) 2013 by Ed Summers.
 
-1;
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut

@@ -1,4 +1,8 @@
 package SRU::Response::SearchRetrieve;
+{
+  $SRU::Response::SearchRetrieve::VERSION = '1.01';
+}
+#ABSTRACT: A class for representing SRU searchRetrieve responses
 
 use strict;
 use warnings;
@@ -7,34 +11,6 @@ use SRU::Utils::XML qw( element );
 use SRU::Utils qw( error );
 use SRU::Response::Record;
 
-=head1 NAME
-
-SRU::Response::SearchRetrieve - A class for representing SRU searchRetrieve 
-responses
-
-=head1 SYNOPSIS
-
-    ## create response from the request object
-    my $response = SRU::Response::SearchRetrieve->new( $request );
-
-    ## add records to the response 
-    foreach my $record ( @records ) { $response->addRecord( $record ); }
-
-    ## print out the response as XML
-    print $response->asXML();
-
-=head1 DESCRIPTION
-
-SRU::Response::SearchRetrieve provides a framework for bundling up 
-the response to a searchRetrieve request. You are responsible for
-generating the XML representation of the records, and the rest
-should be taken care of.
-
-=head1 METHODS
-
-=head2 new()
-
-=cut
 
 sub new {
     my ($class,$request) = @_;
@@ -63,11 +39,6 @@ sub new {
     return $self;
 }
 
-=head2 numberOfRecords()
-
-Returns the number of results associated with the object.
-
-=cut 
 
 sub numberOfRecords {
     my ($self,$num) = @_;
@@ -75,16 +46,6 @@ sub numberOfRecords {
     return $self->{numberOfRecords};
 }
 
-=head2 addRecord()
-
-Add a SRU::Response::Record object to the response.
-
-    $response->addRecord( $r );
-
-If you don't pass in the right sort of object you'll get back
-undef and $SRU::Error will be populated appropriately.
-
-=cut
 
 sub addRecord {
     my ($self,$r) = @_;
@@ -97,27 +58,7 @@ sub addRecord {
     push( @{ $self->{records} }, $r );
 }
 
-=head2 records()
 
-Gets or sets all the records associated with the object. Be careful
-with this one :) You must pass in an array ref, and expect an 
-array ref back.
-
-=cut 
-
-=head2 resultSetId()
-
-=head2 resultSetIdleTime()
-
-=head2 nextRecordPosition()
-
-=head2 diagnostics()
-
-=head2 extraResponseData()
-
-=head2 echoedSearchRetrieveRequest()
-
-=cut
 
 SRU::Response::SearchRetrieve->mk_accessors( qw(
     version 
@@ -131,13 +72,6 @@ SRU::Response::SearchRetrieve->mk_accessors( qw(
     stylesheet
 ) );
 
-=head2 asXML()
-
-    asXML(encoding=>"ISO-8859-1")
-
-Returns the object serialized as XML. UTF-8 and UTF-16 are default encodings if you don't pass the encoding parameter. You can define different encoding in order to parse you XML document correctly.
-
-=cut
 
 sub asXML {
     my $self     = shift;
@@ -198,3 +132,90 @@ SEARCHRETRIEVE_XML
 }
 
 1;
+
+__END__
+
+=pod
+
+=head1 NAME
+
+SRU::Response::SearchRetrieve - A class for representing SRU searchRetrieve responses
+
+=head1 SYNOPSIS
+
+    ## create response from the request object
+    my $response = SRU::Response::SearchRetrieve->new( $request );
+
+    ## add records to the response 
+    foreach my $record ( @records ) { $response->addRecord( $record ); }
+
+    ## print out the response as XML
+    print $response->asXML();
+
+=head1 DESCRIPTION
+
+SRU::Response::SearchRetrieve provides a framework for bundling up 
+the response to a searchRetrieve request. You are responsible for
+generating the XML representation of the records, and the rest
+should be taken care of.
+
+=head1 METHODS
+
+=head2 new()
+
+=cut
+
+=head2 numberOfRecords()
+
+Returns the number of results associated with the object.
+
+=cut
+
+=head2 addRecord()
+
+Add a SRU::Response::Record object to the response.
+
+    $response->addRecord( $r );
+
+If you don't pass in the right sort of object you'll get back
+undef and $SRU::Error will be populated appropriately.
+
+=cut
+
+=head2 records()
+
+Gets or sets all the records associated with the object. Be careful
+with this one :) You must pass in an array ref, and expect an 
+array ref back.
+
+=cut
+
+=head2 resultSetId()
+
+=head2 resultSetIdleTime()
+
+=head2 nextRecordPosition()
+
+=head2 diagnostics()
+
+=head2 extraResponseData()
+
+=head2 echoedSearchRetrieveRequest()
+
+=cut
+
+=head2 asXML()
+
+    asXML(encoding=>"ISO-8859-1")
+
+Returns the object serialized as XML. UTF-8 and UTF-16 are default encodings if you don't pass the encoding parameter. You can define different encoding in order to parse you XML document correctly.
+
+=cut
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2013 by Ed Summers.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
